@@ -7,6 +7,7 @@ import TyreList from "../components/TyreList";
 import MotorcycleBoard from "../components/ui/MotorcycleBoard";
 import TestimonialsSection from "../components/TestimonialSection";
 import Banner from "../components/Banner";
+import ContactUs from "../components/ui/ContactUs";
 
 // Reusable Section Title Component
 const SectionTitle = ({
@@ -17,9 +18,9 @@ const SectionTitle = ({
   className = "",
 }) => (
   <section
-    className={`text-center py-8 bg-gradient-to-b from-gray-50 to-white ${className}`}
+    className={`text-center py-8 bg-square-grid ${className}`}
   >
-    <div className="container mx-auto px-4">
+    <div className="container bg-square-grid mx-auto px-4">
       <h2 className="font-bold text-4xl md:text-5xl text-gray-900 mb-4 tracking-tight leading-tight">
         {title}
       </h2>
@@ -86,7 +87,7 @@ function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-r from-white to-gray-200">
       <Header />
 
       <main>
@@ -101,7 +102,7 @@ function LandingPage() {
           subtitle="Select from Our Exclusive Fleet of Premium Two-Wheelers"
         />
 
-        <section className="bg-gray-50 py-12 px-4 sm:px-10">
+        <section className=" bg-square-grid py-1 px-4 sm:px-10">
           <div className="container mx-auto">
             {isLoading ? <LoadingSkeleton /> : <BikeList />}
           </div>
@@ -115,17 +116,19 @@ function LandingPage() {
           gradientTo="to-blue-600"
         />
 
-        <section className="bg-gray-50 py-12 px-4 sm:px-10">
+        <section className="bg-square-grid py-1 px-4 sm:px-10">
           <div className="container mx-auto">
             {isLoading ? <LoadingSkeleton /> : <TyreList />}
           </div>
         </section>
 
         {/* Motorcycle Board Section */}
-        <section className="py-8">
+        <section className="py-8 bg-square-grid">
           <MotorcycleBoard />
         </section>
       </main>
+    <ContactUs />
+
       <Banner />
 
       <TestimonialsSection />

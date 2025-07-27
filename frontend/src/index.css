@@ -1,1 +1,25 @@
 @import "tailwindcss";
+
+@layer utilities {
+  .bg-minimal-grid {
+    background-color: white;
+    background-image: 
+      linear-gradient(rgba(0,0,0,.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  .bg-dot-grid {
+    background-color: white;
+    background-image: radial-gradient(circle, #e5e7eb 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .bg-square-grid {
+    background-color: white;
+    background-image:
+      linear-gradient(#eef1f5 1px, transparent 1px),
+      linear-gradient(90deg, #f2f7fc 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+}
