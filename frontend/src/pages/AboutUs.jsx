@@ -4,8 +4,7 @@ import bg1 from "../assets/aboutus1.png"
 import Footer from '../components/Footer';
 
 const AboutUs = () => {
-  const [openAccordion, setOpenAccordion] = useState('browse'); // 'browse' is open by default
-
+  const [openAccordion, setOpenAccordion] = useState('browse'); 
   const toggleAccordion = (section) => {
     setOpenAccordion(openAccordion === section ? '' : section);
   };

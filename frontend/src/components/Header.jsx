@@ -1,7 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Clock } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function Header() {
+  const location = useLocation();
+  const currentPath = location.pathname;
+
+  const navItems = [
+    { name: "Home", href: "/", key: "/" },
+    { name: "About Us", href: "/aboutus", key: "/aboutus" },
+    { name: "Bikes", href: "/bikes", key: "/bikes" },
+    { name: "Tyres", href: "/tyres", key: "/tyres" },
+    { name: "Feedback", href: "/feedback", key: "/feedback" },
+    { name: "Contact Us", href: "/contact", key: "/contact" },
+  ];
+
   return (
     <header className="w-full">
       {/* Top Bar */}
@@ -14,15 +27,19 @@ export default function Header() {
       </div>
 
       {/* Main Navigation */}
-      <div className="bg-black text-white px-6 py-7 flex justify-center items-center">
-        {/* Nav Links */}
+      <div className="bg-black text-white px-6 py-8 flex justify-center items-center">
         <nav className="flex gap-8 text-lg">
-          <a href="/home" className="hover:text-orange-500 text-orange-500">Home</a>
-          <a href="/aboutus" className="hover:text-orange-500 text-gray-400">About Us</a>
-          <a href="#" className="hover:text-orange-500 text-gray-400">Bikes</a>
-          <a href="#" className="hover:text-orange-500 text-gray-400">Tyres</a>
-          <a href="#" className="hover:text-orange-500 text-gray-400">Feedback</a>
-          <a href="#" className="hover:text-orange-500 text-gray-400">Contact Us</a>
+          {navItems.map((item) => (
+            <Link
+              key={item.key}
+              to={item.href}
+              className={`hover:text-orange-500 ${
+                currentPath === item.key ? "text-red-500" : "text-gray-400"
+              } text-sm transition-colors duration-200`}
+            >
+              {item.name}
+            </Link>
+          ))}
         </nav>
       </div>
     </header>
