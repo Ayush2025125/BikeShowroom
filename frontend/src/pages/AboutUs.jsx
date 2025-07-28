@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header from '../components/Header';
 import bg1 from "../assets/aboutus1.png"
 import Footer from '../components/Footer';
+import ChooseUs from '../components/ChooseUs';
 
 const AboutUs = () => {
   const [openAccordion, setOpenAccordion] = useState('browse'); 
@@ -285,152 +286,8 @@ const AboutUs = () => {
         </div>
 
         {/* Why Choose Us Section */}
-        <div className="bg-white py-20 px-8 relative">
-          <div className="max-w-7xl mx-auto">
-            
-            {/* Section Header */}
-            <div className="text-center mb-16">
-              <div className="inline-block mb-6">
-                <div className="bg-red-100 text-red-600 px-6 py-2 rounded-full text-sm font-semibold tracking-wide">
-                  WHY CHOOSE US
-                </div>
-              </div>
-              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4">
-                Unmatched quality and service<br />
-                for your needs
-              </h2>
-            </div>
-
-            {/* Main Content Layout */}
-            <div className="flex flex-col lg:flex-row items-center justify-center gap-16">
-              
-              {/* Left Side Features */}
-              <div className="space-y-8 lg:w-1/3">
-                
-                {/* Extensive Fleet Options */}
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                      <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Extensive Fleet Options</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      Quisque Sollicitudin Feugiat Risus, Eu Posuere Ex Euismod Eu. Phasellus Hendrerit, Massa
-                    </p>
-                  </div>
-                </div>
-
-                {/* Exceptional Customer Service */}
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                      <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Exceptional Customer Service</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      Quisque Sollicitudin Feugiat Risus, Eu Posuere Ex Euismod Eu. Phasellus Hendrerit, Massa
-                    </p>
-                  </div>
-                </div>
-
-                {/* Affordable Pricing */}
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                      <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Affordable Pricing</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      Quisque Sollicitudin Feugiat Risus, Eu Posuere Ex Euismod Eu. Phasellus Hendrerit, Massa
-                    </p>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Center Car Image */}
-              <div className="flex justify-center lg:w-1/3">
-                <div className="w-96 h-64 bg-gradient-to-br from-blue-50 to-blue-100 rounded-full flex items-center justify-center shadow-xl">
-                  <img 
-                    src="https://images.unsplash.com/photo-1502877338535-766e1452684a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-                    alt="Premium SUV" 
-                    className="w-80 h-48 object-contain"
-                  />
-                </div>
-              </div>
-
-              {/* Right Side Features */}
-              <div className="space-y-8 lg:w-1/3">
-                
-                {/* Convenient Locations */}
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                      <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Convenient Locations</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      Quisque Sollicitudin Feugiat Risus, Eu Posuere Ex Euismod Eu. Phasellus Hendrerit, Massa
-                    </p>
-                  </div>
-                </div>
-
-                {/* Reliability And Safety */}
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                      <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Reliability And Safety</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      Quisque Sollicitudin Feugiat Risus, Eu Posuere Ex Euismod Eu. Phasellus Hendrerit, Massa
-                    </p>
-                  </div>
-                </div>
-
-                {/* 24/7 Support */}
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                      <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">24/7 Support</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      Quisque Sollicitudin Feugiat Risus, Eu Posuere Ex Euismod Eu. Phasellus Hendrerit, Massa
-                    </p>
-                  </div>
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
+        <div className='mb-12'>
+        <ChooseUs />
         </div>
 
       </div>
