@@ -17,8 +17,8 @@ export default function Header() {
       <div className="bg-black text-white px-6 py-7 flex justify-center items-center">
         {/* Nav Links */}
         <nav className="flex gap-8 text-lg">
-          <a href="#" className="hover:text-orange-500 text-orange-500">Home</a>
-          <a href="#" className="hover:text-orange-500 text-gray-400">About Us</a>
+          <a href="/home" className="hover:text-orange-500 text-orange-500">Home</a>
+          <a href="/aboutus" className="hover:text-orange-500 text-gray-400">About Us</a>
           <a href="#" className="hover:text-orange-500 text-gray-400">Bikes</a>
           <a href="#" className="hover:text-orange-500 text-gray-400">Tyres</a>
           <a href="#" className="hover:text-orange-500 text-gray-400">Feedback</a>
