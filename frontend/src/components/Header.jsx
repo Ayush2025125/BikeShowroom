@@ -11,7 +11,7 @@ export default function Header() {
     { name: "About Us", href: "/about", key: "/about" },
     { name: "Bikes", href: "/bikes", key: "/bikes" },
     { name: "Tyres", href: "/tyres", key: "/tyres" },
-    { name: "Feedback", href: "/feedback", key: "/feedback" },
+    { name: "Feedback", href: "https://www.google.com/maps/place/Bajaj+Auto+(Bharat+Automobiles,+Bhubaneshwar,+Nayapalli)/@20.2907399,85.808734,15.85z/data=!4m16!1m7!3m6!1s0x3a1909f14e56a9c5:0x915c58f75df63281!2sNAJ+MOTORS!8m2!3d20.2894055!4d85.8095674!16s%2Fg%2F11lgczjbh9!3m7!1s0x3a1909b19a3cda0b:0x821db4a3340f8c2d!8m2!3d20.2902578!4d85.8172452!9m1!1b1!16s%2Fg%2F11c522mnls?entry=ttu&g_ep=EgoyMDI1MDcyNy4wIKXMDSoASAFQAw%3D%3D", key: "/feedback" },
     { name: "Contact Us", href: "/contact", key: "/contact" },
   ];
 

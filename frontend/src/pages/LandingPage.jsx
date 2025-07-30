@@ -8,6 +8,7 @@ import MotorcycleBoard from "../components/ui/MotorcycleBoard";
 import TestimonialsSection from "../components/TestimonialSection";
 import Banner from "../components/Banner";
 import ContactUs from "../components/ui/ContactUs";
+import BikeHover from "../components/BikeHover";
 
 // Reusable Section Title Component
 const SectionTitle = ({
@@ -94,6 +95,10 @@ function LandingPage() {
         {/* Hero Section */}
         <section className="relative">
           <HeroCarousel />
+        </section>
+
+        <section className="relative">
+          <BikeHover />
         </section>
 
         {/* Bikes Section */}

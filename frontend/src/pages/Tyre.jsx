@@ -1,167 +1,132 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useState } from 'react';
+import { Star } from 'lucide-react';
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import Carousal from '../components/Carousal';
+import ShowcaseSection from '../components/ShowCaseSection';
+import ShowOffer from '../components/modal/ShowOffer';
+import bikeInfo from '../data/topSellingBikes';
 
-const offers = [
-  {
-    id: 1,
-    title: "Summer Sale",
-    subtitle: "Up to 30% Off",
-    description: "Get amazing discounts on premium bikes this summer",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&h=600&fit=crop",
-    buttonText: "Shop Now",
-  },
-  {
-    id: 2,
-    title: "Trade-In Bonus",
-    subtitle: "Extra $2000 Credit",
-    description: "Trade in your old bike and get extra credit towards a new one",
-    image: "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=1200&h=600&fit=crop",
-    buttonText: "Learn More",
-  },
-  {
-    id: 3,
-    title: "Zero Interest Financing",
-    subtitle: "0% APR for 12 Months",
-    description: "Qualified buyers can enjoy zero interest financing",
-    image: "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?w=1200&h=600&fit=crop",
-    buttonText: "Apply Now",
-  },
-  {
-    id: 4,
-    title: "Service Special",
-    subtitle: "Free Oil Change",
-    description: "Complimentary oil change with any service over $200",
-    image: "https://images.unsplash.com/photo-1558877385-8c207b5c4b78?w=1200&h=600&fit=crop",
-    buttonText: "Book Service",
-  },
-];
+const BikeCard = ({ bike, onCheckOffers }) => {
+  return (
+    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+      {/* Bike Image */}
+      <div className="relative h-48 bg-gradient-to-br from-blue-100 to-orange-100 flex items-center justify-center">
+        <img 
+          src={bike.image}
+          alt={bike.name || "Bike Image"}
+          className="w-full h-full object-cover"
+        />
+      </div>
+       
+      {/* Bike Details */}
+      <div className="p-4">
+        <h3 className="font-semibold text-gray-800 text-lg mb-2">{bike.name}</h3>
+                 
+        <div className="text-lg font-bold text-gray-900 mb-2">
+          {bike.price}
+        </div>
+                 
+        {/* Rating and Reviews */}
+        <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-1">
+            <span className="text-sm font-medium text-gray-700">{bike.rating?.toFixed(1) || 'N/A'}</span>
+            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+          </div>
+          <span className="text-sm text-gray-600">{bike.reviews || 0} Reviews</span>
+        </div>
+                 
+        {/* Check Offers Button */}
+        <button 
+          onClick={() => onCheckOffers(bike)}
+          className="w-full text-blue-600 font-medium text-sm py-2 px-4 border border-blue-600 rounded hover:bg-blue-50 transition-colors duration-200">
+          Check Offers
+        </button>
+      </div>
+    </div>
+  );
+};
 
-export default function Tyre() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const intervalRef = useRef(null);
-  const autoPlayTimeoutRef = useRef(null);
+const TopSellingsSection = () => {
+  const [selectedBike, setSelectedBike] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const startAutoPlay = useCallback(() => {
-    clearInterval(intervalRef.current);
-    intervalRef.current = setInterval(() => {
-      setCurrentIndex(prev => (prev === offers.length - 1 ? 0 : prev + 1));
-    }, 3000);
-  }, []);
-
-  const stopAutoPlay = useCallback(() => {
-    clearInterval(intervalRef.current);
-  }, []);
-
-  const resumeAutoPlayWithDelay = useCallback(() => {
-    clearTimeout(autoPlayTimeoutRef.current);
-    autoPlayTimeoutRef.current = setTimeout(() => {
-      startAutoPlay();
-    }, 3000);
-  }, [startAutoPlay]);
-
-  const nextSlide = useCallback(() => {
-    setCurrentIndex(prev => (prev === offers.length - 1 ? 0 : prev + 1));
-    stopAutoPlay();
-    resumeAutoPlayWithDelay();
-  }, [stopAutoPlay, resumeAutoPlayWithDelay]);
-
-  const prevSlide = useCallback(() => {
-    setCurrentIndex(prev => (prev === 0 ? offers.length - 1 : prev - 1));
-    stopAutoPlay();
-    resumeAutoPlayWithDelay();
-  }, [stopAutoPlay, resumeAutoPlayWithDelay]);
-
-  const goToSlide = index => {
-    setCurrentIndex(index);
-    stopAutoPlay();
-    resumeAutoPlayWithDelay();
+  const handleCheckOffers = (bike) => {
+    // Transform your bike data to match the modal's expected format
+    const modalBikeData = {
+      name: bike.name,
+      images: bike.image ? [bike.image, bike.image, bike.image] : ["/api/placeholder/400/300"],
+      price: bike.price,
+      originalPrice: bike.originalPrice || "₹1,35,000", // Add original price to your bike data if available
+      discount: bike.discount || "₹15,000 OFF", // Add discount to your bike data if available
+      emi: bike.emi || "₹3,200/month", // Add EMI to your bike data if available
+      range: bike.range || bike.mileage || "45-50 km/l",
+      engine: bike.engine || "149cc",
+      maxPower: bike.maxPower || "12.4 BHP",
+      maxTorque: bike.maxTorque || "13.6 Nm",
+      fuelCapacity: bike.fuelCapacity || "13L",
+      offers: bike.offers || [
+        "Zero down payment available",
+        "Exchange bonus up to ₹10,000",
+        "Extended warranty for 2 years",
+        "Free service for 6 months"
+      ]
+    };
+    
+    setSelectedBike(modalBikeData);
+    setIsModalOpen(true);
   };
 
-  useEffect(() => {
-    startAutoPlay();
-    return () => {
-      stopAutoPlay();
-      clearTimeout(autoPlayTimeoutRef.current);
-    };
-  }, [startAutoPlay, stopAutoPlay]);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedBike(null);
+  };
 
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col">
-      <Header />
-
-      <div className="flex-grow py-12 px-4">
-        <div className="relative w-full max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-          {/* Slides */}
-          <div className="relative h-96 md:h-[500px]">
-            {offers.map((offer, index) => (
-              <div
-                key={offer.id}
-                className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-                  index === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"
-                }`}
-              >
-                <img
-                  src={offer.image}
-                  alt={offer.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-40" />
-                <div className="absolute inset-0 flex items-center justify-center px-6 text-center text-white">
-                  <div className="max-w-2xl">
-                    <h2 className="text-4xl md:text-6xl font-bold mb-4">
-                      {offer.title}
-                    </h2>
-                    <h3 className="text-2xl md:text-3xl text-yellow-400 font-semibold mb-4">
-                      {offer.subtitle}
-                    </h3>
-                    <p className="text-lg md:text-xl mb-8 text-gray-200">
-                      {offer.description}
-                    </p>
-                    <button className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-3 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105">
-                      {offer.buttonText}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Arrows */}
-          <button
-            onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all duration-200 z-20"
-            aria-label="Previous slide"
-          >
-            <ChevronLeft className="w-6 h-6 text-gray-800" />
+    <div className="bg-white py-12 px-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Section Title */}
+        <h2 className="text-2xl font-bold text-gray-900 mb-8">OUR TOP SELLINGS</h2>
+                 
+        {/* Bikes Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+          {bikeInfo.map((bike) => (
+            <BikeCard 
+              key={bike.id} 
+              bike={bike} 
+              onCheckOffers={handleCheckOffers}
+            />
+          ))}
+        </div>
+                 
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <button className="bg-red-500 hover:bg-red-600 text-white font-semibold py-4 px-8 rounded-lg text-lg transition-colors duration-200 min-w-48">
+            CONTACT US
           </button>
-          <button
-            onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all duration-200 z-20"
-            aria-label="Next slide"
-          >
-            <ChevronRight className="w-6 h-6 text-gray-800" />
+          <button className="bg-gray-800 hover:bg-gray-900 text-white font-semibold py-4 px-8 rounded-lg text-lg transition-colors duration-200 min-w-48">
+            GET QUOTATION
           </button>
-
-          {/* Dots */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
-            {offers.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goToSlide(index)}
-                className={`h-3 rounded-full transition-all duration-300 ${
-                  index === currentIndex
-                    ? "bg-yellow-500 w-8"
-                    : "bg-white bg-opacity-60 hover:bg-opacity-90 w-3"
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
-          </div>
         </div>
       </div>
 
+      {/* Modal - Using ShowOffer component */}
+      <ShowOffer 
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        bikeData={selectedBike}
+      />
+    </div>
+  );
+};
+
+export default function Tyre() {
+  return (
+    <div className="bg-gray-100 min-h-screen flex flex-col gap-4">
+      <Header />
+      <Carousal />
+      <TopSellingsSection />
+      <ShowcaseSection />
       <Footer />
     </div>
   );
