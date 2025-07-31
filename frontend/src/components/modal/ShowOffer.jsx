@@ -103,10 +103,69 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
           </button>
         </div>
 
-        {/* Main Content - Changed to flex-1 and overflow-hidden */}
+        {/* Main Content - Mobile: column (image top, info bottom), Desktop: row */}
         <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
-          {/* Left Side - Details & Offers */}
-          <div className="w-full lg:w-1/2 p-4 sm:p-6 overflow-y-auto flex-1">
+          {/* Image Section - Shows first on mobile, right side on desktop */}
+          <div className="w-full lg:w-1/2 bg-gray-100 relative h-[250px] lg:h-auto lg:order-2">
+            <div className="h-full flex items-center justify-center relative p-4">
+              {bike.images && bike.images.length > 0 ? (
+                <img
+                  src={bike.images[currentImageIndex]}
+                  alt={`${bike.name} - Image ${currentImageIndex + 1}`}
+                  className="w-full h-full max-w-full max-h-full object-contain rounded-lg"
+                  style={{ maxHeight: '400px', maxWidth: '100%' }}
+                  onError={(e) => {
+                    e.target.src = "/api/placeholder/400/300";
+                  }}
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-gray-500">No images available</p>
+                </div>
+              )}
+
+              {/* Image Navigation */}
+              {bike.images && bike.images.length > 1 && (
+                <>
+                  <button
+                    onClick={prevImage}
+                    className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft size={18} className="sm:w-5 sm:h-5" />
+                  </button>
+                  <button
+                    onClick={nextImage}
+                    className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
+                    aria-label="Next image"
+                  >
+                    <ChevronRight size={18} className="sm:w-5 sm:h-5" />
+                  </button>
+                </>
+              )}
+
+              {/* Image Indicators */}
+              {bike.images && bike.images.length > 1 && (
+                <div className="absolute bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                  {bike.images.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentImageIndex(index)}
+                      className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all ${
+                        index === currentImageIndex
+                          ? "bg-blue-500"
+                          : "bg-white bg-opacity-50"
+                      }`}
+                      aria-label={`Go to image ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Details & Offers Section - Shows second on mobile, left side on desktop */}
+          <div className="w-full lg:w-1/2 p-4 sm:p-6 overflow-y-auto flex-1 lg:order-1">
             {/* Pricing Section */}
             <div className="mb-6">
               <div className="flex items-center gap-3 mb-2 flex-wrap">
@@ -200,65 +259,6 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
                   </span>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Right Side - Images - Optimized for mobile and laptop */}
-          <div className="w-full lg:w-1/2 bg-gray-100 relative min-h-[250px] lg:min-h-0">
-            <div className="h-full flex items-center justify-center relative p-4">
-              {bike.images && bike.images.length > 0 ? (
-                <img
-                  src={bike.images[currentImageIndex]}
-                  alt={`${bike.name} - Image ${currentImageIndex + 1}`}
-                  className="w-full h-full max-w-full max-h-full object-contain rounded-lg"
-                  style={{ maxHeight: '400px', maxWidth: '100%' }}
-                  onError={(e) => {
-                    e.target.src = "/api/placeholder/400/300";
-                  }}
-                />
-              ) : (
-                <div className="flex items-center justify-center h-full">
-                  <p className="text-gray-500">No images available</p>
-                </div>
-              )}
-
-              {/* Image Navigation */}
-              {bike.images && bike.images.length > 1 && (
-                <>
-                  <button
-                    onClick={prevImage}
-                    className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
-                    aria-label="Previous image"
-                  >
-                    <ChevronLeft size={18} className="sm:w-5 sm:h-5" />
-                  </button>
-                  <button
-                    onClick={nextImage}
-                    className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
-                    aria-label="Next image"
-                  >
-                    <ChevronRight size={18} className="sm:w-5 sm:h-5" />
-                  </button>
-                </>
-              )}
-
-              {/* Image Indicators */}
-              {bike.images && bike.images.length > 1 && (
-                <div className="absolute bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                  {bike.images.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all ${
-                        index === currentImageIndex
-                          ? "bg-blue-500"
-                          : "bg-white bg-opacity-50"
-                      }`}
-                      aria-label={`Go to image ${index + 1}`}
-                    />
-                  ))}
-                </div>
-              )}
             </div>
           </div>
         </div>
