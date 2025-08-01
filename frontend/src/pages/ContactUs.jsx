@@ -14,7 +14,7 @@ const ContactUs = () => {
 
   const [status, setStatus] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitType, setSubmitType] = useState(''); // 'success' or 'error'
+  const [submitType, setSubmitType] = useState(''); 
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -69,12 +69,12 @@ const ContactUs = () => {
     <>
       <Header />
       
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
         {/* Hero Section */}
-        <div className="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 text-white py-20">
+        <div className="bg-gradient-to-r from-black via-gray-900 to-black text-white py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 className="text-5xl font-bold mb-6">Get In Touch</h1>
-            <p className="text-xl text-blue-100 max-w-2xl mx-auto">
+            <p className="text-xl text-orange-300 max-w-2xl mx-auto">
               Have questions about our bikes or services? We're here to help! 
               Reach out to us and we'll get back to you as soon as possible.
             </p>
@@ -86,9 +86,9 @@ const ContactUs = () => {
           <div className="grid lg:grid-cols-2 gap-12">
             
             {/* Contact Form */}
-            <div className="bg-white rounded-2xl shadow-xl p-8 lg:p-10">
+            <div className="bg-white rounded-2xl shadow-xl p-8 lg:p-10 border border-gray-100">
               <div className="mb-8">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Send us a Message</h2>
+                <h2 className="text-3xl font-bold text-black mb-4">Send us a Message</h2>
                 <p className="text-gray-600">
                   Fill out the form below and we'll get back to you within 24 hours.
                 </p>
@@ -97,7 +97,7 @@ const ContactUs = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-black mb-2">
                       Full Name *
                     </label>
                     <input
@@ -106,12 +106,12 @@ const ContactUs = () => {
                       placeholder="Enter your full name"
                       value={form.name}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 outline-none"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 outline-none"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-black mb-2">
                       Phone Number *
                     </label>
                     <input
@@ -120,14 +120,14 @@ const ContactUs = () => {
                       placeholder="+91 98765 43210"
                       value={form.phone}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 outline-none"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 outline-none"
                       required
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-black mb-2">
                     Email Address *
                   </label>
                   <input
@@ -136,13 +136,13 @@ const ContactUs = () => {
                     placeholder="your.email@example.com"
                     value={form.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 outline-none"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 outline-none"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-black mb-2">
                     Message
                   </label>
                   <textarea
@@ -150,7 +150,7 @@ const ContactUs = () => {
                     placeholder="Tell us about your inquiry, preferred bike models, or any questions you have..."
                     value={form.message}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 outline-none resize-none"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 outline-none resize-none"
                     rows="5"
                   />
                 </div>
@@ -158,7 +158,7 @@ const ContactUs = () => {
                 <button 
                   type="submit" 
                   disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:transform-none"
+                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:transform-none"
                 >
                   {isSubmitting ? (
                     <>
@@ -193,7 +193,7 @@ const ContactUs = () => {
             {/* Contact Information */}
             <div className="space-y-8">
               <div className="text-center lg:text-left">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Contact Information</h2>
+                <h2 className="text-3xl font-bold text-black mb-4">Contact Information</h2>
                 <p className="text-gray-600 text-lg">
                   Multiple ways to reach us. Choose what works best for you.
                 </p>
@@ -201,15 +201,15 @@ const ContactUs = () => {
 
               <div className="grid gap-6">
                 {contactInfo.map((info, index) => (
-                  <div key={index} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+                  <div key={index} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300 border border-gray-100">
                     <div className="flex items-start gap-4">
-                      <div className="bg-blue-100 p-3 rounded-lg">
-                        <div className="text-blue-600">
+                      <div className="bg-orange-100 p-3 rounded-lg">
+                        <div className="text-orange-600">
                           {info.icon}
                         </div>
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-2">{info.title}</h3>
+                        <h3 className="text-xl font-semibold text-black mb-2">{info.title}</h3>
                         <div className="space-y-1">
                           {info.details.map((detail, idx) => (
                             <p key={idx} className="text-gray-700 font-medium">{detail}</p>
@@ -221,8 +221,6 @@ const ContactUs = () => {
                   </div>
                 ))}
               </div>
-
-             
             </div>
           </div>
         </div>
