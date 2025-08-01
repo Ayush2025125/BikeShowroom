@@ -5,6 +5,7 @@ import Bikes from "./pages/Bikes";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Tyre from "./pages/Tyre";
+import LoginPage from "./pages/LoginPage";
 
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/bikes" element={<Bikes />} />
         <Route path="/tyres" element={<Tyre />} />
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
     </BrowserRouter>
   );

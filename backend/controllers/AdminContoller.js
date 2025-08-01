@@ -13,7 +13,7 @@ exports.registerAdmin = async (req, res) => {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const admin = new Admin({ username, password: hashedPassword });
+    const admin = new Admin({ username, password: password });
     await admin.save();
 
     res.status(201).json({ msg: 'Admin registered successfully' });
@@ -29,7 +29,8 @@ exports.loginAdmin = async (req, res) => {
     const admin = await Admin.findOne({ username });
     if (!admin) return res.status(400).json({ msg: 'Admin does not exist' });
 
-    const isMatch = await bcrypt.compare(password, admin.password);
+    //const isMatch = await bcrypt.compare(password, admin.password);
+    const isMatch = await Admin.findOne({username, password});
     if (!isMatch) return res.status(400).json({ msg: 'Invalid credentials' });
 
     const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -39,3 +40,5 @@ exports.loginAdmin = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
