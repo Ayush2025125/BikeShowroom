@@ -1,8 +1,25 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { FaFacebookF, FaYoutube, FaInstagram } from 'react-icons/fa';
 import footerBg from "../assets/footer2.jpg";
+import axios from 'axios';
 
 export default function Footer() {
+
+  const [mail, setMail] = useState('');
+
+  const handleSubmit = async (e) => {
+     e.preventDefault();
+     if (!mail) return;
+
+     try {
+        const res = await axios.post('http://localhost:5000/api/newsletter', { email: mail});
+        alert("subscribed successfully");
+        setMail('');
+     } catch (err) {
+     console.log(err);
+     alert("Subscription failed. Try again later.");
+     }
+  }
   return (
     <footer className="text-white py-10 px-4 relative">
       
@@ -25,10 +42,13 @@ export default function Footer() {
             <input
               type="email"
               placeholder="Email Address"
+              value={mail}
+              onChange={(e) => setMail(e.target.value)}
               className="px-4 py-3 rounded-md bg-white text-black w-full md:w-72 outline-none"
             />
             <button 
               type="button"
+              onClick={handleSubmit}
               className="bg-black text-white px-6 py-3 rounded-md font-medium hover:bg-gray-800 transition"
             >
               Subscribe
@@ -84,10 +104,13 @@ export default function Footer() {
                 <input
                   type="email"
                   placeholder="Email Address"
-                  className="bg-white bg-opacity-10 border border-gray-600 px-4 py-2 rounded-md text-white placeholder-gray-400 outline-none focus:border-[#FF2E3A] transition-colors backdrop-blur-sm"
+                  value={mail}
+                  onChange={(e) => setMail(e.target.value)}
+                  className="bg-white bg-opacity-10 border border-gray-600 text-gray-600 px-4 py-2 rounded-md  placeholder-gray-400 outline-none focus:border-[#FF2E3A] transition-colors backdrop-blur-sm"
                 />
                 <button 
                   type="button"
+                  onClick={handleSubmit}
                   className="bg-[#FF2E3A] hover:bg-red-600 px-4 py-2 rounded-md font-medium transition-colors duration-200"
                 >
                   Subscribe

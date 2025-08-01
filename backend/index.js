@@ -5,6 +5,7 @@ const cors = require('cors');
 
 const adminRoutes = require('./routes/adminRoutes.js');
 const contactRoutes = require('./routes/contactRoutes.js');
+const newsletterRoutes = require('./routes/newsletterRoutes');
 
 dotenv.config();
 const app = express();
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use('/api/admin', adminRoutes);
 
 app.use('/api', contactRoutes);
+app.use('/api/newsletter', newsletterRoutes);
 
 // DB Connection
 mongoose.connect(process.env.MONGO_URI).then(() => {
