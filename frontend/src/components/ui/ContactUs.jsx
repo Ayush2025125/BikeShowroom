@@ -2,8 +2,10 @@ import React from "react";
 import bike1 from "../../assets/bike1.jpg";
 import bike2 from "../../assets/bike2.jpg";
 import { Send, PhoneCall } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const ContactUs = () => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-8">
       {/* Main Container */}
@@ -124,11 +126,14 @@ const ContactUs = () => {
           </div>
 
           <div className="flex space-x-4 pt-8">
-            <button className="flex items-center space-x-2 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow transition duration-200 transform hover:-translate-y-1">
+            <button 
+            onClick={() => navigate("/contact")}
+            className="flex items-center space-x-2 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow transition duration-200 transform hover:-translate-y-1">
               <PhoneCall className="w-5 h-5" />
               <span>Contact Us</span>
             </button>
-            <button className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white p-3 rounded-lg shadow transition duration-200 transform hover:-translate-y-1">
+            <button onClick={() => navigate("/contact")}
+            className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white p-3 rounded-lg shadow transition duration-200 transform hover:-translate-y-1">
               <Send className="w-5 h-5" />
             </button>
           </div>
