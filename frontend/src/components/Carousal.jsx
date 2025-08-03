@@ -114,7 +114,7 @@ export default function Carousal() {
   }, [startAutoPlay, stopAutoPlay]);
 
   return (
-    <div className="flex-grow py-12 px-4 ">
+    <div className="flex-grow py-12 px-4">
       <div className="relative w-full max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
         {/* Slides */}
         <div className="relative h-96 md:h-[500px]">

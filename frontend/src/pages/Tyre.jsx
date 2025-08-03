@@ -181,8 +181,18 @@ const TopSellingsSection = () => {
   };
 
   return (
-    <div className="bg-white py-12 px-4">
-      <div className="max-w-7xl mx-auto">
+    <div className="bg-white/15 backdrop-blur-sm py-12 px-4 relative border border-white/25 shadow-xl">
+      {/* Burnout tire marks pattern */}
+      <div 
+        className="absolute inset-0 opacity-12 pointer-events-none"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='400' height='80' viewBox='0 0 400 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23000000'%3E%3C!-- Straight tire marks --%3E%3Cpath d='M0 25 Q50 20 100 25 Q150 30 200 25 Q250 20 300 25 Q350 30 400 25' stroke-width='10' opacity='0.4' stroke-linecap='round'/%3E%3Cpath d='M0 35 Q50 30 100 35 Q150 40 200 35 Q250 30 300 35 Q350 40 400 35' stroke-width='8' opacity='0.3' stroke-linecap='round'/%3E%3Cpath d='M0 55 Q50 50 100 55 Q150 60 200 55 Q250 50 300 55 Q350 60 400 55' stroke-width='10' opacity='0.4' stroke-linecap='round'/%3E%3Cpath d='M0 65 Q50 60 100 65 Q150 70 200 65 Q250 60 300 65 Q350 70 400 65' stroke-width='8' opacity='0.3' stroke-linecap='round'/%3E%3C!-- Tire tread marks --%3E%3Cg opacity='0.3'%3E%3Crect x='10' y='23' width='3' height='4'/%3E%3Crect x='18' y='24' width='3' height='3'/%3E%3Crect x='26' y='23' width='3' height='4'/%3E%3Crect x='34' y='24' width='3' height='3'/%3E%3Crect x='42' y='23' width='3' height='4'/%3E%3Crect x='50' y='24' width='3' height='3'/%3E%3Crect x='58' y='23' width='3' height='4'/%3E%3Crect x='66' y='24' width='3' height='3'/%3E%3Crect x='74' y='23' width='3' height='4'/%3E%3Crect x='82' y='24' width='3' height='3'/%3E%3Crect x='90' y='23' width='3' height='4'/%3E%3Crect x='98' y='24' width='3' height='3'/%3E%3Crect x='10' y='53' width='3' height='4'/%3E%3Crect x='18' y='54' width='3' height='3'/%3E%3Crect x='26' y='53' width='3' height='4'/%3E%3Crect x='34' y='54' width='3' height='3'/%3E%3Crect x='42' y='53' width='3' height='4'/%3E%3Crect x='50' y='54' width='3' height='3'/%3E%3Crect x='58' y='53' width='3' height='4'/%3E%3Crect x='66' y='54' width='3' height='3'/%3E%3Crect x='74' y='53' width='3' height='4'/%3E%3Crect x='82' y='54' width='3' height='3'/%3E%3Crect x='90' y='53' width='3' height='4'/%3E%3Crect x='98' y='54' width='3' height='3'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundSize: '600px 120px',
+          backgroundRepeat: 'repeat-x'
+        }}
+      />
+      
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* Header Section with Title and Search */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-4 md:mb-0">OUR TOP SELLINGS</h2>
@@ -394,12 +404,37 @@ const TopSellingsSection = () => {
 
 export default function Tyre() {
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col gap-4">
-      <Header />
-      <Carousal />
-      <TopSellingsSection />
-      <ShowcaseSection />
-      <Footer />
+    <div className="bg-gray-100 min-h-screen flex flex-col gap-4 relative">
+      {/* Tire Track Marks Background Pattern */}
+      <div 
+        className="fixed inset-0 opacity-15 pointer-events-none z-0"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='200' height='100' viewBox='0 0 200 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3C!-- Left tire track --%3E%3Cpath d='M10 20 Q30 25 50 20 Q70 15 90 20 Q110 25 130 20 Q150 15 170 20 Q190 25 210 20' stroke='%23000000' stroke-width='4' fill='none' opacity='0.8'/%3E%3Cpath d='M15 30 Q35 35 55 30 Q75 25 95 30 Q115 35 135 30 Q155 25 175 30 Q195 35 215 30' stroke='%23000000' stroke-width='3' fill='none' opacity='0.6'/%3E%3C!-- Right tire track --%3E%3Cpath d='M10 60 Q30 65 50 60 Q70 55 90 60 Q110 65 130 60 Q150 55 170 60 Q190 65 210 60' stroke='%23000000' stroke-width='4' fill='none' opacity='0.8'/%3E%3Cpath d='M15 70 Q35 75 55 70 Q75 65 95 70 Q115 75 135 70 Q155 65 175 70 Q195 75 215 70' stroke='%23000000' stroke-width='3' fill='none' opacity='0.6'/%3E%3C!-- Tread marks --%3E%3Crect x='20' y='18' width='2' height='6' opacity='0.7'/%3E%3Crect x='25' y='19' width='2' height='4' opacity='0.6'/%3E%3Crect x='30' y='18' width='2' height='6' opacity='0.7'/%3E%3Crect x='35' y='19' width='2' height='4' opacity='0.6'/%3E%3Crect x='40' y='18' width='2' height='6' opacity='0.7'/%3E%3Crect x='45' y='19' width='2' height='4' opacity='0.6'/%3E%3Crect x='50' y='18' width='2' height='6' opacity='0.7'/%3E%3Crect x='55' y='19' width='2' height='4' opacity='0.6'/%3E%3Crect x='60' y='18' width='2' height='6' opacity='0.7'/%3E%3Crect x='65' y='19' width='2' height='4' opacity='0.6'/%3E%3Crect x='70' y='18' width='2' height='6' opacity='0.7'/%3E%3Crect x='75' y='19' width='2' height='4' opacity='0.6'/%3E%3Crect x='80' y='18' width='2' height='6' opacity='0.7'/%3E%3Crect x='85' y='19' width='2' height='4' opacity='0.6'/%3E%3Crect x='20' y='58' width='2' height='6' opacity='0.7'/%3E%3Crect x='25' y='59' width='2' height='4' opacity='0.6'/%3E%3Crect x='30' y='58' width='2' height='6' opacity='0.7'/%3E%3Crect x='35' y='59' width='2' height='4' opacity='0.6'/%3E%3Crect x='40' y='58' width='2' height='6' opacity='0.7'/%3E%3Crect x='45' y='59' width='2' height='4' opacity='0.6'/%3E%3Crect x='50' y='58' width='2' height='6' opacity='0.7'/%3E%3Crect x='55' y='59' width='2' height='4' opacity='0.6'/%3E%3Crect x='60' y='58' width='2' height='6' opacity='0.7'/%3E%3Crect x='65' y='59' width='2' height='4' opacity='0.6'/%3E%3Crect x='70' y='58' width='2' height='6' opacity='0.7'/%3E%3Crect x='75' y='59' width='2' height='4' opacity='0.6'/%3E%3Crect x='80' y='58' width='2' height='6' opacity='0.7'/%3E%3Crect x='85' y='59' width='2' height='4' opacity='0.6'/%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundSize: '400px 200px',
+          backgroundRepeat: 'repeat'
+        }}
+      />
+      
+      {/* Additional skid marks at different angles */}
+      <div 
+        className="fixed inset-0 opacity-10 pointer-events-none z-0"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='300' height='150' viewBox='0 0 300 150' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23000000' stroke-width='5' opacity='0.7'%3E%3C!-- Curved skid mark --%3E%3Cpath d='M50 50 Q100 30 150 50 Q200 70 250 50' stroke-dasharray='8,4'/%3E%3Cpath d='M50 80 Q100 60 150 80 Q200 100 250 80' stroke-dasharray='6,3'/%3E%3C!-- Acceleration marks --%3E%3Cpath d='M80 100 L85 110 M90 102 L95 112 M100 104 L105 114 M110 106 L115 116 M120 108 L125 118' stroke-width='3' opacity='0.8'/%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundSize: '600px 300px',
+          backgroundRepeat: 'repeat',
+          transform: 'rotate(-15deg)',
+          transformOrigin: 'center'
+        }}
+      />
+      
+      {/* Content with relative positioning to appear above background */}
+      <div className="relative z-10">
+        <Header />
+        <Carousal />
+        <TopSellingsSection />
+        <ShowcaseSection />
+        <Footer />
+      </div>
     </div>
   );
 }
