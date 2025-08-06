@@ -7,19 +7,21 @@ import 'slick-carousel/slick/slick-theme.css';
 import Tyre from "./pages/Tyre";
 import LoginPage from "./pages/LoginPage";
 import ContactUs from "./pages/ContactUs";
-
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/about" element={<AboutUs />} />
-        <Route path="/bikes" element={<Bikes />} />
-        <Route path="/tyres" element={<Tyre />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/contact" element={<ContactUs />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/bikes" element={<Bikes />} />
+          <Route path="/tyres" element={<Tyre />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/contact" element={<ContactUs />} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

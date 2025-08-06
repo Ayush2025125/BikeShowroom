@@ -1,9 +1,12 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, } from 'react';
 import ShowOffer from '../components/modal/ShowOffer';
 import axios from 'axios';
-import {Star, Search, Filter, X, ChevronDown, Loader2 } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
+// import { useAuth } from '../context/AuthContext';
+import { Search, Filter, X, ChevronDown, Loader2, Edit, Trash2, Plus, Save, AlertTriangle } from 'lucide-react';
 
-const BikeCard = ({ bike, onCheckOffers }) => {
+
+const BikeCard = ({ bike, onCheckOffers, onEdit, onDelete, isAdmin }) => {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       <div className="relative h-48 bg-gradient-to-br from-blue-100 to-orange-100 flex items-center justify-center">
@@ -15,6 +18,32 @@ const BikeCard = ({ bike, onCheckOffers }) => {
             e.target.src = "/api/placeholder/400/300"; 
           }}
         />
+        
+        {/* Admin Actions Overlay */}
+        {isAdmin && (
+          <div className="absolute top-2 right-2 flex gap-2">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(bike);
+              }}
+              className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors shadow-lg"
+              title="Edit Bike"
+            >
+              <Edit className="w-4 h-4" />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(bike);
+              }}
+              className="bg-red-600 text-white p-2 rounded-full hover:bg-red-700 transition-colors shadow-lg"
+              title="Delete Bike"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
        
       <div className="p-4">
@@ -51,8 +80,370 @@ const BikeCard = ({ bike, onCheckOffers }) => {
 };
 
 
+// Bike Form Modal Component
+const BikeFormModal = ({ isOpen, onClose, onSubmit, bike = null, isLoading }) => {
+  const [formData, setFormData] = useState({
+    name: '',
+    priceRange: '',
+    finalPrice: '',
+    discount: '',
+    emiStartingFrom: '',
+    image: '',
+    specs: {
+      engine: '',
+      mileage: '',
+      maxPower: '',
+      maxTorque: '',
+      fuelTank: ''
+    },
+    specialOffers: [],
+    emiOptions: []
+  });
+
+  useEffect(() => {
+    if (bike) {
+      setFormData({
+        name: bike.name || '',
+        priceRange: bike.priceRange || '',
+        finalPrice: bike.finalPrice || '',
+        discount: bike.discount || '',
+        emiStartingFrom: bike.emiStartingFrom || '',
+        image: bike.image || '',
+        specs: {
+          engine: bike.specs?.engine || '',
+          mileage: bike.specs?.mileage || '',
+          maxPower: bike.specs?.maxPower || '',
+          maxTorque: bike.specs?.maxTorque || '',
+          fuelTank: bike.specs?.fuelTank || ''
+        },
+        specialOffers: bike.specialOffers || [],
+        emiOptions: bike.emiOptions || []
+      });
+    } else {
+      // Reset form for new bike
+      setFormData({
+        name: '',
+        priceRange: '',
+        finalPrice: '',
+        discount: '',
+        emiStartingFrom: '',
+        image: '',
+        specs: {
+          engine: '',
+          mileage: '',
+          maxPower: '',
+          maxTorque: '',
+          fuelTank: ''
+        },
+        specialOffers: [],
+        emiOptions: []
+      });
+    }
+  }, [bike, isOpen]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name.startsWith('specs.')) {
+      const specField = name.split('.')[1];
+      setFormData(prev => ({
+        ...prev,
+        specs: {
+          ...prev.specs,
+          [specField]: value
+        }
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">
+              {bike ? 'Edit Bike' : 'Add New Bike'}
+            </h2>
+            <button 
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Basic Information */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Bike Name *
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Image Filename
+                </label>
+                <input
+                  type="text"
+                  name="image"
+                  value={formData.image}
+                  onChange={handleInputChange}
+                  placeholder="e.g., bike1.jpg"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Price Range *
+                </label>
+                <input
+                  type="text"
+                  name="priceRange"
+                  value={formData.priceRange}
+                  onChange={handleInputChange}
+                  placeholder="e.g., ₹1,50,000 - ₹2,00,000"
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Final Price
+                </label>
+                <input
+                  type="text"
+                  name="finalPrice"
+                  value={formData.finalPrice}
+                  onChange={handleInputChange}
+                  placeholder="e.g., ₹1,75,000"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Discount
+                </label>
+                <input
+                  type="text"
+                  name="discount"
+                  value={formData.discount}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Save ₹25,000"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  EMI Starting From
+                </label>
+                <input
+                  type="text"
+                  name="emiStartingFrom"
+                  value={formData.emiStartingFrom}
+                  onChange={handleInputChange}
+                  placeholder="e.g., ₹3,500/month"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            {/* Specifications */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Specifications</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Engine
+                  </label>
+                  <input
+                    type="text"
+                    name="specs.engine"
+                    value={formData.specs.engine}
+                    onChange={handleInputChange}
+                    placeholder="e.g., 149.5cc"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Mileage
+                  </label>
+                  <input
+                    type="text"
+                    name="specs.mileage"
+                    value={formData.specs.mileage}
+                    onChange={handleInputChange}
+                    placeholder="e.g., 50 km/l"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Max Power
+                  </label>
+                  <input
+                    type="text"
+                    name="specs.maxPower"
+                    value={formData.specs.maxPower}
+                    onChange={handleInputChange}
+                    placeholder="e.g., 13.2 hp"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Max Torque
+                  </label>
+                  <input
+                    type="text"
+                    name="specs.maxTorque"
+                    value={formData.specs.maxTorque}
+                    onChange={handleInputChange}
+                    placeholder="e.g., 13.9 Nm"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Fuel Tank Capacity
+                  </label>
+                  <input
+                    type="text"
+                    name="specs.fuelTank"
+                    value={formData.specs.fuelTank}
+                    onChange={handleInputChange}
+                    placeholder="e.g., 12 liters"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Form Actions */}
+            <div className="flex justify-end gap-4 pt-6 border-t">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Save className="w-4 h-4" />
+                )}
+                {bike ? 'Update Bike' : 'Add Bike'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Delete Confirmation Modal
+const DeleteConfirmModal = ({ isOpen, onClose, onConfirm, bikeName, isLoading }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg max-w-md w-full p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <AlertTriangle className="w-6 h-6 text-red-500" />
+          <h2 className="text-xl font-bold text-gray-900">Delete Bike</h2>
+        </div>
+        
+        <p className="text-gray-600 mb-6">
+          Are you sure you want to delete <strong>{bikeName}</strong>? This action cannot be undone.
+        </p>
+        
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={onClose}
+            disabled={isLoading}
+            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={isLoading}
+            className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Trash2 className="w-4 h-4" />
+            )}
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const useLocalStorage = (key, defaultValue = null) => {
+  const [value, setValue] = useState(defaultValue);
+
+  useEffect(() => {
+    try {
+      const item = localStorage.getItem(key);
+      setValue(item ?? defaultValue);
+    } catch (error) {
+      console.log("localStorage not available");
+    }
+  }, [key]);
+
+  return value;
+};
+
 
 const BikeDisplay = () => {
+  const location = useLocation();
+
+  const token = useLocalStorage("adminToken");
+  
+
+  const isAdmin = !!token;
+ 
+  // const { isAdmin, token, user } = useAuth();
   const [bikes, setBikes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -67,13 +458,39 @@ const BikeDisplay = () => {
     mileageRange: { min: '', max: '' }
   });
 
+  // Admin states
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [editingBike, setEditingBike] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deletingBike, setDeletingBike] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // API helper function
+  const apiCall = async (method, url, data = null) => {
+    const config = {
+      method,
+      url: `http://localhost:5000${url}`,
+      headers: {}
+    };
+
+    if (token && isAdmin) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    if (data) {
+      config.data = data;
+      config.headers['Content-Type'] = 'application/json';
+    }
+
+    return axios(config);
+  };
+
   // Fetch bikes from MongoDB
   useEffect(() => {
     const fetchBikes = async () => {
       try {
         setLoading(true);
-        // Replace with your actual API endpoint
-        const response = await axios.get('http://localhost:5000/api/bikes'); 
+        const response = await apiCall('GET', '/api/bikes');
         setBikes(response.data);
         setError(null);
       } catch (err) {
@@ -87,54 +504,45 @@ const BikeDisplay = () => {
     fetchBikes();
   }, []);
 
-  // Helper function to extract brand from bike name
+  // Helper functions (same as before)
   const extractBrandFromName = (name) => {
     const brands = ['Yamaha', 'Honda', 'Bajaj', 'TVS', 'Hero', 'Royal Enfield', 'KTM', 'Suzuki', 'Kawasaki'];
     return brands.find(brand => name.toLowerCase().includes(brand.toLowerCase())) || 'Other';
   };
 
-  // Helper function to extract numeric value from price string
   const extractPriceValue = (priceString) => {
     const match = priceString.match(/[\d,]+/);
     return match ? parseInt(match[0].replace(/,/g, '')) : 0;
   };
 
-  // Helper function to extract numeric value from engine string
   const extractEngineValue = (engineString) => {
     const match = engineString.match(/(\d+)/);
     return match ? parseInt(match[1]) : 0;
   };
 
-  // Helper function to extract numeric value from mileage string
   const extractMileageValue = (mileageString) => {
     const match = mileageString.match(/(\d+(?:\.\d+)?)/);
     return match ? parseFloat(match[1]) : 0;
   };
 
-  // Get unique brands for filter options
   const availableBrands = [...new Set(bikes.map(bike => extractBrandFromName(bike.name)).filter(Boolean))];
 
   // Filter and search bikes
   const filteredBikes = useMemo(() => {
     return bikes.filter(bike => {
-      // Search filter
       const matchesSearch = bike.name.toLowerCase().includes(searchTerm.toLowerCase());
       
-      // Price filter
       const priceValue = extractPriceValue(bike.finalPrice);
       const matchesPrice = (!filters.priceRange.min || priceValue >= parseInt(filters.priceRange.min)) &&
                           (!filters.priceRange.max || priceValue <= parseInt(filters.priceRange.max));
       
-      // Engine filter
       const engineValue = extractEngineValue(bike.specs.engine);
       const matchesEngine = (!filters.engineRange.min || engineValue >= parseInt(filters.engineRange.min)) &&
                            (!filters.engineRange.max || engineValue <= parseInt(filters.engineRange.max));
       
-      // Brand filter
       const bikeBrand = extractBrandFromName(bike.name);
       const matchesBrand = filters.brands.length === 0 || filters.brands.includes(bikeBrand);
       
-      // Mileage filter
       const mileageValue = extractMileageValue(bike.specs.mileage);
       const matchesMileage = (!filters.mileageRange.min || mileageValue >= parseInt(filters.mileageRange.min)) &&
                             (!filters.mileageRange.max || mileageValue <= parseInt(filters.mileageRange.max));
@@ -143,12 +551,69 @@ const BikeDisplay = () => {
     });
   }, [searchTerm, filters, bikes]);
 
+  // Admin Functions
+  const handleAddBike = () => {
+    setEditingBike(null);
+    setIsFormModalOpen(true);
+  };
+
+  const handleEditBike = (bike) => {
+    setEditingBike(bike);
+    setIsFormModalOpen(true);
+  };
+
+  const handleDeleteBike = (bike) => {
+    setDeletingBike(bike);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleFormSubmit = async (formData) => {
+    setIsSubmitting(true);
+    try {
+      let response;
+      if (editingBike) {
+        // Update existing bike
+        response = await apiCall('PUT', `/api/bikes/${editingBike._id}`, formData);
+        setBikes(prev => prev.map(bike => 
+          bike._id === editingBike._id ? response.data : bike
+        ));
+      } else {
+        // Add new bike
+        response = await apiCall('POST', '/api/bikes', formData);
+        setBikes(prev => [...prev, response.data]);
+      }
+      
+      setIsFormModalOpen(false);
+      setEditingBike(null);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setError('Failed to save bike. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    setIsSubmitting(true);
+    try {
+      await apiCall('DELETE', `/api/bikes/${deletingBike._id}`);
+      setBikes(prev => prev.filter(bike => bike._id !== deletingBike._id));
+      setIsDeleteModalOpen(false);
+      setDeletingBike(null);
+    } catch (error) {
+      console.error('Error deleting bike:', error);
+      setError('Failed to delete bike. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleCheckOffers = (bike) => {
     const modalBikeData = {
       name: bike.name,
       images: bike.image
-  ? [`/images/bikes/${bike.image}`, `/images/bikes/${bike.image}`, `/images/bikes/${bike.image}`]
-  : ["/images/placeholder.jpg"],
+        ? [`/images/bikes/${bike.image}`, `/images/bikes/${bike.image}`, `/images/bikes/${bike.image}`]
+        : ["/images/placeholder.jpg"],
       price: bike.priceRange,
       originalPrice: bike.finalPrice,
       discount: bike.discount,
@@ -234,8 +699,26 @@ const BikeDisplay = () => {
   return (
     <div className="bg-white py-12 px-4">
       <div className="max-w-7xl mx-auto">
-        {/* Section Title */}
-        <h2 className="text-2xl font-bold text-gray-900 mb-8">OUR TOP SELLINGS</h2>
+        {/* Section Title with Admin Controls */}
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-2xl font-bold text-gray-900">OUR TOP SELLINGS</h2>
+          
+          {/* Admin Status and Controls */}
+          <div className="flex items-center gap-4">
+            {isAdmin && (
+              <>
+                <span className="text-sm text-green-600 font-medium">Admin Mode</span>
+                <button
+                  onClick={handleAddBike}
+                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add New Bike
+                </button>
+              </>
+            )}
+          </div>
+        </div>
         
         {/* Search and Filter Section */}
         <div className="mb-8">
@@ -420,6 +903,9 @@ const BikeDisplay = () => {
                 key={bike._id} 
                 bike={bike} 
                 onCheckOffers={handleCheckOffers}
+                onEdit={handleEditBike}
+                onDelete={handleDeleteBike}
+                isAdmin={isAdmin}
               />
             ))
           ) : (
@@ -427,8 +913,7 @@ const BikeDisplay = () => {
               <p className="text-gray-500 text-lg mb-4">No bikes found matching your criteria</p>
               <button
                 onClick={clearFilters}
-                className="text-blue-600 hover:text-blue-700 font-medium"
-              >
+                className="text-blue-600 hover:text-blue-700 font-medium">
                 Clear filters to see all bikes
               </button>
             </div>
@@ -446,7 +931,30 @@ const BikeDisplay = () => {
         </div>
       </div>
 
-     
+      {/* Modals */}
+      <BikeFormModal
+        isOpen={isFormModalOpen}
+        onClose={() => {
+          setIsFormModalOpen(false);
+          setEditingBike(null);
+        }}
+        onSubmit={handleFormSubmit}
+        bike={editingBike}
+        isLoading={isSubmitting}
+      />
+
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setDeletingBike(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        bikeName={deletingBike?.name}
+        isLoading={isSubmitting}
+      />
+
+      
       <ShowOffer 
         isOpen={isModalOpen}
         onClose={closeModal}
