@@ -1,7 +1,7 @@
 //TyreDisplay.jsx
 import React, { useState } from 'react';
 import { Star, Search } from 'lucide-react';
-import ShowOffer from './modal/ShowOffer';
+import ShowOfferTyre from './modal/ShowOfferTyre';
 import { tyreData, getTyresByCategory, getTyresByPriceRange, getTyresByBrand, getTyresBySize } from "../data/TyreCardData";
 
 const TyreCard = ({ tyre, onCheckOffers }) => {
@@ -394,7 +394,7 @@ const TyreDisplay = () => {
       {/* Modal - Positioned outside the main container with proper z-index */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50">
-          <ShowOffer 
+          <ShowOfferTyre 
             isOpen={isModalOpen}
             onClose={closeModal}
             bikeData={selectedTyre}

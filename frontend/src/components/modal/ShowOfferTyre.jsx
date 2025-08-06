@@ -1,52 +1,60 @@
 import React, { useState, useEffect } from "react";
 import { X, ChevronLeft, ChevronRight, Phone, Heart } from "lucide-react";
 
-const ShowOffer = ({ isOpen, onClose, bikeData }) => {
+const ShowOfferTyre = ({ isOpen, onClose, tyreData }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     if (isOpen) {
       setCurrentImageIndex(0);
     }
-  }, [isOpen, bikeData]);
+  }, [isOpen, tyreData]);
 
-  // Sample bike data - replace with your actual data
-  const defaultBikeData = {
-    name: "Yamaha FZ-S V3.0",
+  // Sample tyre data - replace with your actual data
+  const defaultTyreData = {
+    brand: "MRF",
+    model: "Zapper FX",
     images: [
       "/api/placeholder/400/300",
       "/api/placeholder/400/300",
       "/api/placeholder/400/300",
     ],
-    price: "₹1,20,000",
-    originalPrice: "₹1,35,000",
-    discount: "₹15,000 OFF",
-    emi: "₹3,200/month",
-    range: "45-50 km/l",
-    engine: "149cc",
-    maxPower: "12.4 BHP",
-    maxTorque: "13.6 Nm",
-    fuelCapacity: "13L",
+    price: "₹3,500",
+    originalPrice: "₹4,000",
+    discount: "₹500 OFF",
+    size: "100/80-17",
+    type: "Tubeless",
+    pattern: "Street/Sport",
+    compound: "Dual Compound",
+    maxLoad: "315 kg",
+    maxSpeed: "150 km/h",
     offers: [
-      "Zero down payment available",
-      "Exchange bonus up to ₹10,000",
-      "Extended warranty for 2 years",
-      "Free service for 6 months",
+      "Buy 2 Get 1 Year Free Service",
+      "Free installation and balancing",
+      "6 months warranty",
+      "Exchange old tyre for ₹200 off",
     ],
+    features: [
+      "Enhanced grip in wet and dry conditions",
+      "Long lasting tread life",
+      "Superior handling and stability",
+      "Optimized for Indian road conditions",
+      "Reduced rolling resistance for better mileage"
+    ]
   };
 
-  const bike = bikeData || defaultBikeData;
+  const tyre = tyreData || defaultTyreData;
 
   const nextImage = () => {
-    if (bike.images && bike.images.length > 0) {
-      setCurrentImageIndex((prev) => (prev + 1) % bike.images.length);
+    if (tyre.images && tyre.images.length > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % tyre.images.length);
     }
   };
 
   const prevImage = () => {
-    if (bike.images && bike.images.length > 0) {
+    if (tyre.images && tyre.images.length > 0) {
       setCurrentImageIndex(
-        (prev) => (prev - 1 + bike.images.length) % bike.images.length
+        (prev) => (prev - 1 + tyre.images.length) % tyre.images.length
       );
     }
   };
@@ -94,7 +102,9 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
       <div className="bg-white rounded-lg max-w-6xl w-full h-[95vh] sm:h-[90vh] overflow-hidden shadow-2xl flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-800 truncate pr-4">{bike.name}</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800 truncate pr-4">
+            {tyre.brand} {tyre.model}
+          </h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
@@ -108,10 +118,10 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
           {/* Image Section - Shows first on mobile, right side on desktop */}
           <div className="w-full lg:w-1/2 bg-gray-100 relative h-[250px] lg:h-auto lg:order-2">
             <div className="h-full flex items-center justify-center relative p-4">
-              {bike.images && bike.images.length > 0 ? (
+              {tyre.images && tyre.images.length > 0 ? (
                 <img
-                  src={bike.images[currentImageIndex]}
-                  alt={`${bike.name} - Image ${currentImageIndex + 1}`}
+                  src={tyre.images[currentImageIndex]}
+                  alt={`${tyre.brand} ${tyre.model} - Image ${currentImageIndex + 1}`}
                   className="w-full h-full max-w-full max-h-full object-contain rounded-lg"
                   style={{ maxHeight: '400px', maxWidth: '100%' }}
                   onError={(e) => {
@@ -125,7 +135,7 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
               )}
 
               {/* Image Navigation */}
-              {bike.images && bike.images.length > 1 && (
+              {tyre.images && tyre.images.length > 1 && (
                 <>
                   <button
                     onClick={prevImage}
@@ -145,9 +155,9 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
               )}
 
               {/* Image Indicators */}
-              {bike.images && bike.images.length > 1 && (
+              {tyre.images && tyre.images.length > 1 && (
                 <div className="absolute bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                  {bike.images.map((_, index) => (
+                  {tyre.images.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
@@ -170,47 +180,68 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
             <div className="mb-6">
               <div className="flex items-center gap-3 mb-2 flex-wrap">
                 <span className="text-2xl sm:text-3xl font-bold text-green-600">
-                  {bike.price}
+                  {tyre.price}
                 </span>
-                {bike.originalPrice && (
+                {tyre.originalPrice && (
                   <span className="text-base sm:text-lg text-gray-500 line-through">
-                    {bike.originalPrice}
+                    {tyre.originalPrice}
                   </span>
                 )}
               </div>
-              {bike.discount && (
+              {tyre.discount && (
                 <div className="inline-block bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-semibold mb-3">
-                  {bike.discount}
+                  {tyre.discount}
                 </div>
               )}
               <p className="text-gray-600 text-sm sm:text-base">
-                EMI starting from{" "}
-                <span className="font-semibold text-blue-600">{bike.emi}</span>
+                Size: <span className="font-semibold text-blue-600">{tyre.size}</span>
               </p>
             </div>
 
-            {/* Key Specs */}
+            {/* Tyre Specifications */}
             <div className="mb-6">
               <h3 className="text-base sm:text-lg font-semibold mb-3 text-gray-800">
-                Key Specifications
+                Specifications
               </h3>
               <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="text-xs sm:text-sm text-gray-600">Engine</p>
-                  <p className="font-semibold text-sm sm:text-base">{bike.engine}</p>
+                  <p className="text-xs sm:text-sm text-gray-600">Size</p>
+                  <p className="font-semibold text-sm sm:text-base">{tyre.size}</p>
                 </div>
                 <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="text-xs sm:text-sm text-gray-600">Mileage</p>
-                  <p className="font-semibold text-sm sm:text-base">{bike.range}</p>
+                  <p className="text-xs sm:text-sm text-gray-600">Type</p>
+                  <p className="font-semibold text-sm sm:text-base">{tyre.type}</p>
                 </div>
                 <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="text-xs sm:text-sm text-gray-600">Max Power</p>
-                  <p className="font-semibold text-sm sm:text-base">{bike.maxPower}</p>
+                  <p className="text-xs sm:text-sm text-gray-600">Pattern</p>
+                  <p className="font-semibold text-sm sm:text-base">{tyre.pattern}</p>
                 </div>
                 <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="text-xs sm:text-sm text-gray-600">Fuel Tank</p>
-                  <p className="font-semibold text-sm sm:text-base">{bike.fuelCapacity}</p>
+                  <p className="text-xs sm:text-sm text-gray-600">Max Speed</p>
+                  <p className="font-semibold text-sm sm:text-base">{tyre.maxSpeed}</p>
                 </div>
+              </div>
+            </div>
+
+            {/* Key Features */}
+            <div className="mb-6">
+              <h3 className="text-base sm:text-lg font-semibold mb-3 text-gray-800">
+                Key Features
+              </h3>
+              <div className="space-y-2">
+                {tyre.features && tyre.features.length > 0 ? (
+                  tyre.features.map((feature, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center p-3 bg-green-50 rounded-lg"
+                    >
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
+                      <p className="text-xs sm:text-sm text-gray-700">{feature}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-xs sm:text-sm text-gray-500">No features listed</p>
+                )}
               </div>
             </div>
 
@@ -220,8 +251,8 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
                 Special Offers
               </h3>
               <div className="space-y-2">
-                {bike.offers && bike.offers.length > 0 ? (
-                  bike.offers.map((offer, index) => (
+                {tyre.offers && tyre.offers.length > 0 ? (
+                  tyre.offers.map((offer, index) => (
                     <div
                       key={index}
                       className="flex items-center p-3 bg-blue-50 rounded-lg"
@@ -233,31 +264,6 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
                 ) : (
                   <p className="text-xs sm:text-sm text-gray-500">No special offers available</p>
                 )}
-              </div>
-            </div>
-
-            {/* EMI Options */}
-            <div className="mb-6">
-              <h3 className="text-base sm:text-lg font-semibold mb-3 text-gray-800">
-                EMI Options
-              </h3>
-              <div className="space-y-2">
-                <div className="flex justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="text-xs sm:text-sm">12 months</span>
-                  <span className="font-semibold text-sm sm:text-base">₹10,500/month</span>
-                </div>
-                <div className="flex justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="text-xs sm:text-sm">24 months</span>
-                  <span className="font-semibold text-sm sm:text-base">₹5,800/month</span>
-                </div>
-                <div className="flex justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
-                  <span className="text-xs sm:text-sm text-blue-700">
-                    36 months (Popular)
-                  </span>
-                  <span className="font-semibold text-sm sm:text-base text-blue-700">
-                    ₹3,200/month
-                  </span>
-                </div>
               </div>
             </div>
           </div>
@@ -279,4 +285,4 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
   );
 };
 
-export default ShowOffer;
+export default ShowOfferTyre;
