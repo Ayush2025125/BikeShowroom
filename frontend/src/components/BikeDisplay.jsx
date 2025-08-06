@@ -1,3 +1,4 @@
+//BikeDisplay.jsx
 import React, { useState, useMemo, useEffect, } from 'react';
 import ShowOffer from '../components/modal/ShowOffer';
 import axios from 'axios';
