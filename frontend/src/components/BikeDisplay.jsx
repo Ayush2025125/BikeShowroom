@@ -1,16 +1,19 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import ShowOffer from '../components/modal/ShowOffer';
-import bikeInfo from '../data/topSellingBikes';
-import {Star, Search, Filter, X, ChevronDown } from 'lucide-react';
+import axios from 'axios';
+import {Star, Search, Filter, X, ChevronDown, Loader2 } from 'lucide-react';
 
 const BikeCard = ({ bike, onCheckOffers }) => {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       <div className="relative h-48 bg-gradient-to-br from-blue-100 to-orange-100 flex items-center justify-center">
         <img 
-          src={bike.image}
+          src={`/images/bikes/${bike.image}`}
           alt={bike.name || "Bike Image"}
           className="w-full h-full object-cover"
+          onError={(e) => {
+            e.target.src = "/api/placeholder/400/300"; 
+          }}
         />
       </div>
        
@@ -18,15 +21,23 @@ const BikeCard = ({ bike, onCheckOffers }) => {
         <h3 className="font-semibold text-gray-800 text-lg mb-2">{bike.name}</h3>
                  
         <div className="text-lg font-bold text-gray-900 mb-2">
-          {bike.price}
+          {bike.priceRange}
         </div>
-                 
-        <div className="flex items-center gap-2 mb-3">
-          <div className="flex items-center gap-1">
-            <span className="text-sm font-medium text-gray-700">{bike.rating?.toFixed(1) || 'N/A'}</span>
-            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+
+        {bike.priceRange !== bike.finalPrice && (
+          <div className="text-sm text-gray-500 line-through mb-1">
+            {bike.finalPrice}
           </div>
-          <span className="text-sm text-gray-600">{bike.reviews || 0} Reviews</span>
+        )}
+
+        {bike.discount && (
+          <div className="text-sm text-green-600 font-medium mb-2">
+            {bike.discount}
+          </div>
+        )}
+
+        <div className="text-sm text-gray-600 mb-3">
+          EMI from {bike.emiStartingFrom}
         </div>
                  
         <button 
@@ -42,6 +53,9 @@ const BikeCard = ({ bike, onCheckOffers }) => {
 
 
 const BikeDisplay = () => {
+  const [bikes, setBikes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedBike, setSelectedBike] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -50,64 +64,102 @@ const BikeDisplay = () => {
     priceRange: { min: '', max: '' },
     engineRange: { min: '', max: '' },
     brands: [],
-    rating: ''
+    mileageRange: { min: '', max: '' }
   });
 
-  // Helper function to extract brand from bike name if brand field is not available
+  // Fetch bikes from MongoDB
+  useEffect(() => {
+    const fetchBikes = async () => {
+      try {
+        setLoading(true);
+        // Replace with your actual API endpoint
+        const response = await axios.get('http://localhost:5000/api/bikes'); 
+        setBikes(response.data);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching bikes:', err);
+        setError('Failed to load bikes. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBikes();
+  }, []);
+
+  // Helper function to extract brand from bike name
   const extractBrandFromName = (name) => {
     const brands = ['Yamaha', 'Honda', 'Bajaj', 'TVS', 'Hero', 'Royal Enfield', 'KTM', 'Suzuki', 'Kawasaki'];
     return brands.find(brand => name.toLowerCase().includes(brand.toLowerCase())) || 'Other';
   };
 
-  // Get unique brands for filter options - handle cases where brand might not be in data
-  const availableBrands = [...new Set(bikeInfo.map(bike => bike.brand || extractBrandFromName(bike.name)).filter(Boolean))];
+  // Helper function to extract numeric value from price string
+  const extractPriceValue = (priceString) => {
+    const match = priceString.match(/[\d,]+/);
+    return match ? parseInt(match[0].replace(/,/g, '')) : 0;
+  };
+
+  // Helper function to extract numeric value from engine string
+  const extractEngineValue = (engineString) => {
+    const match = engineString.match(/(\d+)/);
+    return match ? parseInt(match[1]) : 0;
+  };
+
+  // Helper function to extract numeric value from mileage string
+  const extractMileageValue = (mileageString) => {
+    const match = mileageString.match(/(\d+(?:\.\d+)?)/);
+    return match ? parseFloat(match[1]) : 0;
+  };
+
+  // Get unique brands for filter options
+  const availableBrands = [...new Set(bikes.map(bike => extractBrandFromName(bike.name)).filter(Boolean))];
 
   // Filter and search bikes
   const filteredBikes = useMemo(() => {
-    return bikeInfo.filter(bike => {
+    return bikes.filter(bike => {
       // Search filter
       const matchesSearch = bike.name.toLowerCase().includes(searchTerm.toLowerCase());
       
-      // Price filter - extract number from price string if priceValue not available
-      const priceValue = bike.priceValue || parseInt(bike.price.replace(/[₹,]/g, ''));
+      // Price filter
+      const priceValue = extractPriceValue(bike.finalPrice);
       const matchesPrice = (!filters.priceRange.min || priceValue >= parseInt(filters.priceRange.min)) &&
                           (!filters.priceRange.max || priceValue <= parseInt(filters.priceRange.max));
       
-      // Engine filter - extract number from engine string if engineValue not available
-      const engineValue = bike.engineValue || parseInt(bike.engine?.replace(/cc/g, '') || '0');
+      // Engine filter
+      const engineValue = extractEngineValue(bike.specs.engine);
       const matchesEngine = (!filters.engineRange.min || engineValue >= parseInt(filters.engineRange.min)) &&
                            (!filters.engineRange.max || engineValue <= parseInt(filters.engineRange.max));
       
-      // Brand filter - use brand field or extract from name
-      const bikeBrand = bike.brand || extractBrandFromName(bike.name);
+      // Brand filter
+      const bikeBrand = extractBrandFromName(bike.name);
       const matchesBrand = filters.brands.length === 0 || filters.brands.includes(bikeBrand);
       
-      // Rating filter
-      const matchesRating = !filters.rating || (bike.rating && bike.rating >= parseFloat(filters.rating));
+      // Mileage filter
+      const mileageValue = extractMileageValue(bike.specs.mileage);
+      const matchesMileage = (!filters.mileageRange.min || mileageValue >= parseInt(filters.mileageRange.min)) &&
+                            (!filters.mileageRange.max || mileageValue <= parseInt(filters.mileageRange.max));
       
-      return matchesSearch && matchesPrice && matchesEngine && matchesBrand && matchesRating;
+      return matchesSearch && matchesPrice && matchesEngine && matchesBrand && matchesMileage;
     });
-  }, [searchTerm, filters]);
+  }, [searchTerm, filters, bikes]);
 
   const handleCheckOffers = (bike) => {
     const modalBikeData = {
       name: bike.name,
-      images: bike.image ? [bike.image, bike.image, bike.image] : ["/api/placeholder/400/300"],
-      price: bike.price,
-      originalPrice: bike.originalPrice || "₹1,35,000",
-      discount: bike.discount || "₹15,000 OFF",
-      emi: bike.emi || "₹3,200/month",
-      range: bike.range || bike.mileage || "45-50 km/l",
-      engine: bike.engine || "149cc",
-      maxPower: bike.maxPower || "12.4 BHP",
-      maxTorque: bike.maxTorque || "13.6 Nm",
-      fuelCapacity: bike.fuelCapacity || "13L",
-      offers: bike.offers || [
-        "Zero down payment available",
-        "Exchange bonus up to ₹10,000",
-        "Extended warranty for 2 years",
-        "Free service for 6 months"
-      ]
+      images: bike.image
+  ? [`/images/bikes/${bike.image}`, `/images/bikes/${bike.image}`, `/images/bikes/${bike.image}`]
+  : ["/images/placeholder.jpg"],
+      price: bike.priceRange,
+      originalPrice: bike.finalPrice,
+      discount: bike.discount,
+      emi: bike.emiStartingFrom,
+      range: bike.specs.mileage,
+      engine: bike.specs.engine,
+      maxPower: bike.specs.maxPower,
+      maxTorque: bike.specs.maxTorque || "N/A",
+      fuelCapacity: bike.specs.fuelTank,
+      offers: bike.specialOffers || [],
+      emiOptions: bike.emiOptions || []
     };
     
     setSelectedBike(modalBikeData);
@@ -133,7 +185,7 @@ const BikeDisplay = () => {
       priceRange: { min: '', max: '' },
       engineRange: { min: '', max: '' },
       brands: [],
-      rating: ''
+      mileageRange: { min: '', max: '' }
     });
     setSearchTerm('');
   };
@@ -141,7 +193,43 @@ const BikeDisplay = () => {
   const hasActiveFilters = searchTerm || 
     filters.priceRange.min || filters.priceRange.max || 
     filters.engineRange.min || filters.engineRange.max || 
-    filters.brands.length > 0 || filters.rating;
+    filters.brands.length > 0 || 
+    filters.mileageRange.min || filters.mileageRange.max;
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="bg-white py-12 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-center py-20">
+            <div className="flex items-center gap-3">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+              <span className="text-lg text-gray-600">Loading bikes...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="bg-white py-12 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center py-20">
+            <div className="text-red-500 text-lg mb-4">{error}</div>
+            <button 
+              onClick={() => window.location.reload()}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white py-12 px-4">
@@ -251,20 +339,31 @@ const BikeDisplay = () => {
                   </div>
                 </div>
 
-                {/* Rating Filter */}
+                {/* Mileage Range */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Minimum Rating</label>
-                  <select
-                    value={filters.rating}
-                    onChange={(e) => setFilters(prev => ({ ...prev, rating: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                  >
-                    <option value="">Any Rating</option>
-                    <option value="4.5">4.5+ Stars</option>
-                    <option value="4.0">4.0+ Stars</option>
-                    <option value="3.5">3.5+ Stars</option>
-                    <option value="3.0">3.0+ Stars</option>
-                  </select>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Mileage (km/l)</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      placeholder="Min"
+                      value={filters.mileageRange.min}
+                      onChange={(e) => setFilters(prev => ({
+                        ...prev,
+                        mileageRange: { ...prev.mileageRange, min: e.target.value }
+                      }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    />
+                    <input
+                      type="number"
+                      placeholder="Max"
+                      value={filters.mileageRange.max}
+                      onChange={(e) => setFilters(prev => ({
+                        ...prev,
+                        mileageRange: { ...prev.mileageRange, max: e.target.value }
+                      }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -286,7 +385,7 @@ const BikeDisplay = () => {
           {/* Results Count */}
           <div className="flex items-center justify-between mt-4">
             <p className="text-sm text-gray-600">
-              Showing {filteredBikes.length} of {bikeInfo.length} bikes
+              Showing {filteredBikes.length} of {bikes.length} bikes
             </p>
             {hasActiveFilters && (
               <div className="flex items-center gap-2">
@@ -318,7 +417,7 @@ const BikeDisplay = () => {
           {filteredBikes.length > 0 ? (
             filteredBikes.map((bike) => (
               <BikeCard 
-                key={bike.id} 
+                key={bike._id} 
                 bike={bike} 
                 onCheckOffers={handleCheckOffers}
               />
@@ -347,7 +446,7 @@ const BikeDisplay = () => {
         </div>
       </div>
 
-      {/* Modal - Using ShowOffer component */}
+     
       <ShowOffer 
         isOpen={isModalOpen}
         onClose={closeModal}

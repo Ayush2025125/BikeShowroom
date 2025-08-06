@@ -7,6 +7,9 @@ const adminRoutes = require('./routes/adminRoutes.js');
 const contactRoutes = require('./routes/contactRoutes.js');
 const newsletterRoutes = require('./routes/newsletterRoutes');
 
+//DB Routes
+const bikeRoutes = require("./routes/bikeRoutes");
+
 dotenv.config();
 const app = express();
 
@@ -15,9 +18,9 @@ app.use(express.json());
 
 // Routes
 app.use('/api/admin', adminRoutes);
-
 app.use('/api', contactRoutes);
 app.use('/api/newsletter', newsletterRoutes);
+app.use('/api/bikes', bikeRoutes);
 
 // DB Connection
 mongoose.connect(process.env.MONGO_URI).then(() => {
