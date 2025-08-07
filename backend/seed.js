@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Tyre = require("./models/Tyres");
+const offer = require("./models/Offer");
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -10,199 +10,74 @@ mongoose.connect(process.env.MONGO_URI, {
   useUnifiedTopology: true
 });
 
-const tyreData = [
+const offers = [
   {
-    brand: "MRF",
-    model: "Zapper FX",
-    images: ["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
-    price: "₹3,500",
-    originalPrice: "₹4,000",
-    discount: "₹500 OFF",
-    size: "100/80-17",
-    type: "Tubeless",
-    pattern: "Street/Sport",
-    compound: "Dual Compound",
-    maxLoad: "315 kg",
-    maxSpeed: "150 km/h",
-    offers: [
-      "Buy 2 Get 1 Year Free Service",
-      "Free installation and balancing",
-      "6 months warranty",
-      "Exchange old tyre for ₹200 off"
-    ],
-    features: [
-      "Enhanced grip in wet and dry conditions",
-      "Long lasting tread life",
-      "Superior handling and stability",
-      "Optimized for Indian road conditions",
-      "Reduced rolling resistance for better mileage"
-    ]
+    title: "Mega Monsoon Offer",
+    subtitle: "Get flat ₹10,000 off",
+    description: "Buy your dream bike this monsoon and avail flat ₹10,000 off on select models.",
+    image: "monsoon_offer.jpg"
   },
   {
-    brand: "CEAT",
-    model: "Gripp X3",
-    images: ["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
-    price: "₹3,200",
-    originalPrice: "₹3,800",
-    discount: "₹600 OFF",
-    size: "90/90-18",
-    type: "Tube",
-    pattern: "All-Terrain",
-    compound: "Soft",
-    maxLoad: "290 kg",
-    maxSpeed: "130 km/h",
-    offers: [
-      "Free first service",
-      "5% cashback on online orders"
-    ],
-    features: [
-      "Dual compound technology for longer life",
-      "Superior cornering stability"
-    ]
+    title: "Festive Ride Bonanza",
+    subtitle: "Free Accessories Worth ₹5,000",
+    description: "Celebrate this festive season with free bike accessories on every purchase.",
+    image: "festive_bonanza.jpg"
   },
   {
-    brand: "Michelin",
-    model: "Pilot Street",
-    images:["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
-    price: "₹4,800",
-    originalPrice: "₹5,300",
-    discount: "₹500 OFF",
-    size: "110/70-17",
-    type: "Tubeless",
-    pattern: "Street",
-    compound: "Single",
-    maxLoad: "280 kg",
-    maxSpeed: "160 km/h",
-    offers: [
-      "3 months warranty",
-      "Free balancing"
-    ],
-    features: [
-      "Excellent wet grip",
-      "Sporty design",
-      "Low noise and vibration"
-    ]
+    title: "Exchange Carnival",
+    subtitle: "Exchange Bonus ₹7,500",
+    description: "Exchange your old bike and get an instant bonus up to ₹7,500.",
+    image: "exchange_offer.jpg"
   },
   {
-    brand: "Apollo",
-    model: "ActiGrip R3",
-    images: ["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
-    price: "₹3,100",
-    originalPrice: "₹3,500",
-    discount: "₹400 OFF",
-    size: "120/80-17",
-    type: "Tube",
-    pattern: "Off-road",
-    compound: "Hard",
-    maxLoad: "300 kg",
-    maxSpeed: "140 km/h",
-    offers: ["Free fitting", "Exchange bonus ₹150"],
-    features: ["Great off-road traction", "Durable in rough terrains"]
+    title: "Student Special Deal",
+    subtitle: "Extra ₹3,000 Discount",
+    description: "College students get an exclusive ₹3,000 off on their first bike.",
+    image: "student_deal.jpg"
   },
   {
-    brand: "TVS Eurogrip",
-    model: "ATT 455",
-    images: ["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
-    price: "₹2,900",
-    originalPrice: "₹3,400",
-    discount: "₹500 OFF",
-    size: "90/90-17",
-    type: "Tubeless",
-    pattern: "Street",
-    compound: "Medium",
-    maxLoad: "270 kg",
-    maxSpeed: "130 km/h",
-    offers: ["3 services free"],
-    features: ["Fuel efficient design", "Good grip on curves"]
+    title: "Corporate Combo",
+    subtitle: "Corporate Buyers Save More",
+    description: "Corporate employees enjoy additional discounts and free insurance.",
+    image: "corporate_offer.jpg"
   },
   {
-    brand: "Ralco",
-    model: "Speed Blaster",
-    images: ["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
-    price: "₹2,800",
-    originalPrice: "₹3,200",
-    discount: "₹400 OFF",
-    size: "80/100-18",
-    type: "Tube",
-    pattern: "Street",
-    compound: "Soft",
-    maxLoad: "250 kg",
-    maxSpeed: "120 km/h",
-    offers: ["Free valve", "Limited warranty"],
-    features: ["Lightweight", "Stable at high speed"]
+    title: "EMI Festival",
+    subtitle: "EMI starting at ₹999",
+    description: "Now own your bike with EMIs starting at just ₹999 per month.",
+    image: "emi_offer.jpg"
   },
   {
-    brand: "JK Tyre",
-    model: "Blaze BR32",
-    images: ["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
-    price: "₹3,600",
-    originalPrice: "₹4,100",
-    discount: "₹500 OFF",
-    size: "100/90-17",
-    type: "Tubeless",
-    pattern: "Sport",
-    compound: "Dual",
-    maxLoad: "310 kg",
-    maxSpeed: "145 km/h",
-    offers: ["Free alignment check", "Gift on purchase"],
-    features: ["Aggressive tread", "Designed for sports bikes"]
+    title: "Weekend Flash Sale",
+    subtitle: "Limited Time Offer",
+    description: "Grab your favorite bike this weekend with exclusive time-bound discounts.",
+    image: "weekend_sale.jpg"
   },
   {
-    brand: "Pirelli",
-    model: "Sport Demon",
-    images:["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
-    price: "₹5,500",
-    originalPrice: "₹6,000",
-    discount: "₹500 OFF",
-    size: "130/70-17",
-    type: "Tubeless",
-    pattern: "Sport Touring",
-    compound: "Medium",
-    maxLoad: "320 kg",
-    maxSpeed: "170 km/h",
-    offers: ["Free install", "Scratch card worth ₹200"],
-    features: ["Exceptional control", "Superior wet/dry performance"]
+    title: "Refer & Earn",
+    subtitle: "Earn ₹1,000 Per Referral",
+    description: "Refer a friend and earn ₹1,000 when they purchase any bike.",
+    image: "refer_offer.jpg"
   },
   {
-    brand: "Maxxis",
-    model: "MA-PRO",
-    images:["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
-    price: "₹3,400",
-    originalPrice: "₹3,900",
-    discount: "₹500 OFF",
-    size: "90/100-18",
-    type: "Tube",
-    pattern: "All-Rounder",
-    compound: "Dual",
-    maxLoad: "275 kg",
-    maxSpeed: "135 km/h",
-    offers: ["Free checkup after 500km"],
-    features: ["Comfort ride", "Decent mileage"]
+    title: "Zero Down Payment",
+    subtitle: "Just Ride Away",
+    description: "Pay nothing upfront! Ride your bike with zero down payment today.",
+    image: "zero_down.jpg"
   },
   {
-    brand: "Continental",
-    model: "ContiGo!",
-    images: ["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
-    price: "₹4,200",
-    originalPrice: "₹4,700",
-    discount: "₹500 OFF",
-    size: "110/80-17",
-    type: "Tubeless",
-    pattern: "Street/Performance",
-    compound: "Soft",
-    maxLoad: "295 kg",
-    maxSpeed: "160 km/h",
-    offers: ["5% discount on next service"],
-    features: ["European quality", "Enhanced tread design"]
-  }
+    title: "Anniversary Celebration",
+    subtitle: "Store Anniversary Deal",
+    description: "Celebrate our anniversary with exclusive offers and surprise gifts.",
+    image: "anniversary_offer.jpg"
+  },
 ];
-
 
 // Insert into MongoDB
 const seedTyres = async () => {
   try {
-    await Tyre.deleteMany(); 
-    await Tyre.insertMany(tyreData);
+    await offer.deleteMany(); 
+    await offer.insertMany(offers);
     console.log("✅ Tyre data seeded successfully.");
     mongoose.connection.close();
   } catch (err) {

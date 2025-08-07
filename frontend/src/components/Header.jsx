@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Clock } from "lucide-react";
+import { Clock, Menu, X } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
 // Custom hook to get localStorage values safely
@@ -21,6 +21,7 @@ const useLocalStorage = (key, defaultValue = null) => {
 export default function Header() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const adminToken = useLocalStorage("adminToken");
   const storedUsername = useLocalStorage("adminUsername");
@@ -30,7 +31,12 @@ export default function Header() {
 
   const handleLogout = () => {
     localStorage.removeItem("adminToken");
+    setIsMobileMenuOpen(false);
     navigate("/login");
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
   const navItems = [
@@ -49,60 +55,41 @@ export default function Header() {
   return (
     <div className="w-full">
       <header className="w-full">
-        {/* Top Bar */}
-        <div className="bg-neutral-800 text-white px-6 py-2 flex justify-between items-center text-sm">
-          <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4" />
-            <span>Open Hours: Mon - Fri 8.00 am - 6.00 pm</span>
-          </div>
-          <div className="italic text-lg tracking-wide font-mono">
-            A key to happiness.
+        {/* Top Bar - Hidden on mobile, visible on desktop */}
+        <div className="hidden sm:block bg-neutral-800 text-white px-4 py-2">
+          <div className="flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm gap-2">
+            <div className="flex items-center gap-2">
+              <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="text-center sm:text-left">Open Hours: Mon - Fri 8.00 am - 6.00 pm</span>
+            </div>
+            <div className="italic text-sm sm:text-lg tracking-wide font-mono">
+              A key to happiness.
+            </div>
           </div>
         </div>
 
         {/* Main Header */}
-        <div className="bg-black text-white px-6 py-6 flex justify-between items-center">
-          {/* Left Spacer */}
-          <div className="w-32" />
+        <div className="bg-black text-white px-4 py-4">
+          {/* Mobile Layout */}
+          <div className="sm:hidden flex justify-between items-center">
+            {/* Mobile Menu Button */}
+            <button
+              onClick={toggleMobileMenu}
+              className="text-white hover:text-orange-500 transition-colors"
+              aria-label="Toggle menu"
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
 
-          {/* Centered Navigation */}
-          <nav className="flex gap-8 text-lg">
-            {navItems.map((item) =>
-              item.href.startsWith("http") ? (
-                <a
-                  key={item.key}
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`hover:text-orange-500 ${
-                    location.pathname === item.key
-                      ? "text-red-500"
-                      : "text-gray-400"
-                  } text-sm transition-colors duration-200`}
-                >
-                  {item.name}
-                </a>
-              ) : (
-                <Link
-                  key={item.key}
-                  to={item.href}
-                  className={`hover:text-orange-500 ${
-                    location.pathname === item.key
-                      ? "text-red-500"
-                      : "text-gray-400"
-                  } text-sm transition-colors duration-200`}
-                >
-                  {item.name}
-                </Link>
-              )
-            )}
-          </nav>
+            {/* Mobile Tagline */}
+            <div className="italic text-sm tracking-wide font-mono text-center flex-1">
+              A key to happiness.
+            </div>
 
-          {/* Admin Username Display */}
-          <div className="w-32 flex justify-end">
+            {/* Admin Info on Mobile */}
             {isAdminLoggedIn && (
-              <div className="flex items-center gap-3">
-                <span className="text-white text-sm font-semibold">
+              <div className="flex items-center gap-2">
+                <span className="text-white text-xs font-semibold max-w-20 truncate">
                   {username}
                 </span>
                 <button
@@ -114,7 +101,110 @@ export default function Header() {
               </div>
             )}
           </div>
+
+          {/* Desktop Layout */}
+          <div className="hidden sm:flex justify-between items-center">
+            {/* Left Spacer */}
+            <div className="w-32" />
+
+            {/* Centered Navigation */}
+            <nav className="flex gap-8 text-lg">
+              {navItems.map((item) =>
+                item.href.startsWith("http") ? (
+                  <a
+                    key={item.key}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`hover:text-orange-500 ${
+                      location.pathname === item.key
+                        ? "text-red-500"
+                        : "text-gray-400"
+                    } text-sm transition-colors duration-200`}
+                  >
+                    {item.name}
+                  </a>
+                ) : (
+                  <Link
+                    key={item.key}
+                    to={item.href}
+                    className={`hover:text-orange-500 ${
+                      location.pathname === item.key
+                        ? "text-red-500"
+                        : "text-gray-400"
+                    } text-sm transition-colors duration-200`}
+                  >
+                    {item.name}
+                  </Link>
+                )
+              )}
+            </nav>
+
+            {/* Admin Username Display */}
+            <div className="w-32 flex justify-end">
+              {isAdminLoggedIn && (
+                <div className="flex items-center gap-3">
+                  <span className="text-white text-sm font-semibold">
+                    {username}
+                  </span>
+                  <button
+                    onClick={handleLogout}
+                    className="bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1 rounded transition"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
+
+        {/* Mobile Navigation Menu */}
+        {isMobileMenuOpen && (
+          <div className="sm:hidden bg-neutral-900 border-t border-neutral-700">
+            <nav className="flex flex-col">
+              {navItems.map((item) =>
+                item.href.startsWith("http") ? (
+                  <a
+                    key={item.key}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`px-4 py-3 border-b border-neutral-800 hover:bg-neutral-800 ${
+                      location.pathname === item.key
+                        ? "text-red-500 bg-neutral-800"
+                        : "text-gray-300"
+                    } transition-colors duration-200`}
+                  >
+                    {item.name}
+                  </a>
+                ) : (
+                  <Link
+                    key={item.key}
+                    to={item.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`px-4 py-3 border-b border-neutral-800 hover:bg-neutral-800 ${
+                      location.pathname === item.key
+                        ? "text-red-500 bg-neutral-800"
+                        : "text-gray-300"
+                    } transition-colors duration-200`}
+                  >
+                    {item.name}
+                  </Link>
+                )
+              )}
+              
+              {/* Mobile Top Bar Info */}
+              <div className="px-4 py-3 border-b border-neutral-800 text-gray-400">
+                <div className="flex items-center gap-2 text-sm">
+                  <Clock className="w-4 h-4" />
+                  <span>Open Hours: Mon - Fri 8.00 am - 6.00 pm</span>
+                </div>
+              </div>
+            </nav>
+          </div>
+        )}
       </header>
     </div>
   );
