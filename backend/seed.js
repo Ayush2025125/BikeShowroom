@@ -14,7 +14,7 @@ const tyreData = [
   {
     brand: "MRF",
     model: "Zapper FX",
-    images: ["tyre1.jpg", "tyre2.jpg", "tyre3.jpg"],
+    images: ["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
     price: "₹3,500",
     originalPrice: "₹4,000",
     discount: "₹500 OFF",
@@ -41,7 +41,7 @@ const tyreData = [
   {
     brand: "CEAT",
     model: "Gripp X3",
-    images: ["tyre4.jpg"],
+    images: ["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
     price: "₹3,200",
     originalPrice: "₹3,800",
     discount: "₹600 OFF",
@@ -63,7 +63,7 @@ const tyreData = [
   {
     brand: "Michelin",
     model: "Pilot Street",
-    images: ["tyre5.jpg"],
+    images:["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
     price: "₹4,800",
     originalPrice: "₹5,300",
     discount: "₹500 OFF",
@@ -86,7 +86,7 @@ const tyreData = [
   {
     brand: "Apollo",
     model: "ActiGrip R3",
-    images: ["tyre6.jpg"],
+    images: ["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
     price: "₹3,100",
     originalPrice: "₹3,500",
     discount: "₹400 OFF",
@@ -102,7 +102,7 @@ const tyreData = [
   {
     brand: "TVS Eurogrip",
     model: "ATT 455",
-    images: ["tyre7.jpg"],
+    images: ["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
     price: "₹2,900",
     originalPrice: "₹3,400",
     discount: "₹500 OFF",
@@ -118,7 +118,7 @@ const tyreData = [
   {
     brand: "Ralco",
     model: "Speed Blaster",
-    images: ["tyre8.jpg"],
+    images: ["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
     price: "₹2,800",
     originalPrice: "₹3,200",
     discount: "₹400 OFF",
@@ -134,7 +134,7 @@ const tyreData = [
   {
     brand: "JK Tyre",
     model: "Blaze BR32",
-    images: ["tyre9.jpg"],
+    images: ["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
     price: "₹3,600",
     originalPrice: "₹4,100",
     discount: "₹500 OFF",
@@ -150,7 +150,7 @@ const tyreData = [
   {
     brand: "Pirelli",
     model: "Sport Demon",
-    images: ["tyre10.jpg"],
+    images:["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
     price: "₹5,500",
     originalPrice: "₹6,000",
     discount: "₹500 OFF",
@@ -166,7 +166,7 @@ const tyreData = [
   {
     brand: "Maxxis",
     model: "MA-PRO",
-    images: ["tyre11.jpg"],
+    images:["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
     price: "₹3,400",
     originalPrice: "₹3,900",
     discount: "₹500 OFF",
@@ -182,7 +182,7 @@ const tyreData = [
   {
     brand: "Continental",
     model: "ContiGo!",
-    images: ["tyre12.jpg"],
+    images: ["tyre1.jpg", "tyre2.webp", "tyre3.jpg"],
     price: "₹4,200",
     originalPrice: "₹4,700",
     discount: "₹500 OFF",

@@ -9,6 +9,7 @@ const newsletterRoutes = require('./routes/newsletterRoutes');
 
 //DB Routes
 const bikeRoutes = require("./routes/bikeRoutes");
+const tyreRoutes = require("./routes/tyreRoutes.js");
 
 dotenv.config();
 const app = express();
@@ -21,6 +22,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api', contactRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/bikes', bikeRoutes);
+app.use('/api/tyres',tyreRoutes);
 
 // DB Connection
 mongoose.connect(process.env.MONGO_URI).then(() => {
