@@ -8,7 +8,6 @@ const BikeHover = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">Bike Showroom</h1>
         
         <div className="relative w-full aspect-video bg-white rounded-lg shadow-lg overflow-hidden">
           {/* Background Image */}
@@ -51,8 +50,6 @@ const BikeHover = () => {
             </div>
           )}
         </div>
-        
-        <p className="text-center text-gray-600 mt-4">Hover over the bike to see details</p>
       </div>
     </div>
   );
