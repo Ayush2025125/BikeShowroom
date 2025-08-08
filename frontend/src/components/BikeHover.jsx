@@ -10,10 +10,10 @@ const BikeHover = () => {
   };
 
   return (
-    <div className="bg-gray-100 px-2 sm:px-4 pt-4 sm:pt-10 pb-6 sm:pb-16">
+    <div className="px-2 sm:px-4 pt-4 sm:pt-10 pb-6 sm:pb-16">
       {/* Wrapper size adjusts with screen */}
       <div className="mx-auto w-full sm:max-w-6xl">
-        <div className="relative w-full aspect-[16/9] bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="relative w-full aspect-[16/9]  rounded-lg shadow-md overflow-hidden">
           {/* Background */}
           <img 
             src={bg}

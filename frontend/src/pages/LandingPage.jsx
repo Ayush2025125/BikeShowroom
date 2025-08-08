@@ -146,7 +146,7 @@ function LandingPage() {
           subtitle="Select from Our Exclusive Fleet of Premium Two-Wheelers"
         />
 
-        <section className="bg-square-grid py-1 px-4 sm:px-6 lg:px-10">
+        <section className="bg-square-grid px-4 sm:px-6 lg:px-10">
           <div className="container mx-auto">
             {isLoading ? <LoadingSkeleton /> : <BikeList />}
           </div>
