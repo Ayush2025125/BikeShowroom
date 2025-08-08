@@ -4,7 +4,7 @@ import ShowOffer from '../components/modal/ShowOffer';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 // import { useAuth } from '../context/AuthContext';
-import { Search, Filter, X, ChevronDown, Loader2, Edit, Trash2, Plus, Save, AlertTriangle } from 'lucide-react';
+import { Search, Filter, X, ChevronDown, Loader2, Edit, Trash2, Plus, Save, AlertTriangle, Eye, EyeOff } from 'lucide-react';
 
 
 const BikeCard = ({ bike, onCheckOffers, onEdit, onDelete, isAdmin }) => {
@@ -459,6 +459,10 @@ const BikeDisplay = () => {
     mileageRange: { min: '', max: '' }
   });
 
+  // Show More State
+  const [showAllBikes, setShowAllBikes] = useState(false);
+  const INITIAL_DISPLAY_COUNT = 8;
+
   // Admin states
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [editingBike, setEditingBike] = useState(null);
@@ -551,6 +555,19 @@ const BikeDisplay = () => {
       return matchesSearch && matchesPrice && matchesEngine && matchesBrand && matchesMileage;
     });
   }, [searchTerm, filters, bikes]);
+
+  // Get bikes to display based on show more state
+  const bikesToDisplay = useMemo(() => {
+    if (showAllBikes) {
+      return filteredBikes;
+    }
+    return filteredBikes.slice(0, INITIAL_DISPLAY_COUNT);
+  }, [filteredBikes, showAllBikes]);
+
+  // Reset show more state when filters change
+  useEffect(() => {
+    setShowAllBikes(false);
+  }, [searchTerm, filters]);
 
   // Admin Functions
   const handleAddBike = () => {
@@ -661,6 +678,11 @@ const BikeDisplay = () => {
     filters.engineRange.min || filters.engineRange.max || 
     filters.brands.length > 0 || 
     filters.mileageRange.min || filters.mileageRange.max;
+
+  // Show More / Show Less handlers
+  const handleToggleShowMore = () => {
+    setShowAllBikes(!showAllBikes);
+  };
 
   // Loading state
   if (loading) {
@@ -866,11 +888,28 @@ const BikeDisplay = () => {
             </div>
           )}
 
-          {/* Results Count */}
+          {/* Results Count and Show More Info */}
           <div className="flex items-center justify-between mt-4">
-            <p className="text-sm text-gray-600">
-              Showing {filteredBikes.length} of {bikes.length} bikes
-            </p>
+            <div className="flex items-center gap-4">
+              <p className="text-sm text-gray-600">
+                Showing {bikesToDisplay.length} of {filteredBikes.length} bikes
+              </p>
+              {/* Show More/Less indicator */}
+              {filteredBikes.length > INITIAL_DISPLAY_COUNT && !showAllBikes && (
+                <div className="flex items-center gap-1 text-sm text-blue-600">
+                  <EyeOff className="w-4 h-4" />
+                  <span>{filteredBikes.length - INITIAL_DISPLAY_COUNT} more available</span>
+                </div>
+              )}
+              
+              {showAllBikes && filteredBikes.length > INITIAL_DISPLAY_COUNT && (
+                <div className="flex items-center gap-1 text-sm text-green-600">
+                  <Eye className="w-4 h-4" />
+                  <span>Showing all bikes</span>
+                </div>
+              )}
+            </div>
+
             {hasActiveFilters && (
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">Active filters:</span>
@@ -897,9 +936,9 @@ const BikeDisplay = () => {
         </div>
                  
         {/* Bikes Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
-          {filteredBikes.length > 0 ? (
-            filteredBikes.map((bike) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+          {bikesToDisplay.length > 0 ? (
+            bikesToDisplay.map((bike) => (
               <BikeCard 
                 key={bike._id} 
                 bike={bike} 
@@ -920,6 +959,28 @@ const BikeDisplay = () => {
             </div>
           )}
         </div>
+
+        {/* Show More / Show Less Button */}
+        {filteredBikes.length > INITIAL_DISPLAY_COUNT && (
+          <div className="flex justify-center mb-8">
+            <button
+              onClick={handleToggleShowMore}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg text-lg transition-colors duration-200"
+            >
+              {showAllBikes ? (
+                <>
+                  <EyeOff className="w-5 h-5" />
+                  Show Less
+                </>
+              ) : (
+                <>
+                  <Eye className="w-5 h-5" />
+                  Show More ({filteredBikes.length - INITIAL_DISPLAY_COUNT} more)
+                </>
+              )}
+            </button>
+          </div>
+        )}
                  
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

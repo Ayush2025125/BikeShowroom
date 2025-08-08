@@ -1,7 +1,21 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Star, Search, Edit, Trash2, Plus, X, ChevronDown, Loader2, Save, AlertTriangle, Filter } from 'lucide-react';
-import ShowOfferTyre from './modal/ShowOfferTyre';
-import axios from 'axios';
+import React, { useState, useEffect, useMemo } from "react";
+import {
+  Star,
+  Search,
+  Edit,
+  Trash2,
+  Plus,
+  X,
+  Eye,
+  EyeOff,
+  ChevronDown,
+  Loader2,
+  Save,
+  AlertTriangle,
+  Filter,
+} from "lucide-react";
+import ShowOfferTyre from "./modal/ShowOfferTyre";
+import axios from "axios";
 
 const TyreCard = ({ tyre, onCheckOffers, onEdit, onDelete, isAdmin }) => {
   return (
@@ -34,28 +48,33 @@ const TyreCard = ({ tyre, onCheckOffers, onEdit, onDelete, isAdmin }) => {
 
       {/* Tyre Image */}
       <div className="relative h-48 bg-gradient-to-br from-gray-100 to-slate-200 flex items-center justify-center">
-        <img 
-          src={tyre.images && tyre.images.length > 0 ? `/images/tyres/${tyre.images[0]}` : "/api/placeholder/400/300"}
+        <img
+          src={
+            tyre.images && tyre.images.length > 0
+              ? `/images/tyres/${tyre.images[0]}`
+              : "/api/placeholder/400/300"
+          }
           alt={`${tyre.brand} ${tyre.model}` || "Tyre Image"}
           className="w-full h-full object-cover"
           onError={(e) => {
-            e.target.src = "/api/placeholder/400/300"; 
+            e.target.src = "/api/placeholder/400/300";
           }}
         />
       </div>
-      
+
       {/* Tyre Details */}
       <div className="p-4">
-        <h3 className="font-semibold text-gray-800 text-lg mb-2">{tyre.brand} {tyre.model}</h3>
-        
+        <h3 className="font-semibold text-gray-800 text-lg mb-2">
+          {tyre.brand} {tyre.model}
+        </h3>
+
         {/* Tyre Specifications */}
         <div className="text-sm text-gray-600 mb-2">
-          <span className="font-medium">Size: </span>{tyre.size || 'N/A'}
+          <span className="font-medium">Size: </span>
+          {tyre.size || "N/A"}
         </div>
-        
-        <div className="text-lg font-bold text-gray-900 mb-2">
-          {tyre.price}
-        </div>
+
+        <div className="text-lg font-bold text-gray-900 mb-2">{tyre.price}</div>
 
         {tyre.originalPrice && tyre.originalPrice !== tyre.price && (
           <div className="text-sm text-gray-500 line-through mb-1">
@@ -68,18 +87,17 @@ const TyreCard = ({ tyre, onCheckOffers, onEdit, onDelete, isAdmin }) => {
             {tyre.discount}
           </div>
         )}
-        
+
         {/* Additional Tyre Info */}
         {tyre.type && (
-          <div className="text-xs text-gray-500 mb-2">
-            Type: {tyre.type}
-          </div>
+          <div className="text-xs text-gray-500 mb-2">Type: {tyre.type}</div>
         )}
-        
+
         {/* Check Offers Button */}
-        <button 
+        <button
           onClick={() => onCheckOffers(tyre)}
-          className="w-full text-blue-600 font-medium text-sm py-2 px-4 border border-blue-600 rounded hover:bg-blue-50 transition-colors duration-200">
+          className="w-full text-blue-600 font-medium text-sm py-2 px-4 border border-blue-600 rounded hover:bg-blue-50 transition-colors duration-200"
+        >
           Check Offers
         </button>
       </div>
@@ -88,74 +106,83 @@ const TyreCard = ({ tyre, onCheckOffers, onEdit, onDelete, isAdmin }) => {
 };
 
 // Tyre Form Modal Component
-const TyreFormModal = ({ isOpen, onClose, onSubmit, tyre = null, isLoading }) => {
+const TyreFormModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  tyre = null,
+  isLoading,
+}) => {
   const [formData, setFormData] = useState({
-    brand: '',
-    model: '',
+    brand: "",
+    model: "",
     images: [],
-    price: '',
-    originalPrice: '',
-    discount: '',
-    size: '',
-    type: '',
-    pattern: '',
-    compound: '',
-    maxLoad: '',
-    maxSpeed: '',
+    price: "",
+    originalPrice: "",
+    discount: "",
+    size: "",
+    type: "",
+    pattern: "",
+    compound: "",
+    maxLoad: "",
+    maxSpeed: "",
     offers: [],
-    features: []
+    features: [],
   });
 
   useEffect(() => {
     if (tyre) {
       setFormData({
-        brand: tyre.brand || '',
-        model: tyre.model || '',
+        brand: tyre.brand || "",
+        model: tyre.model || "",
         images: tyre.images || [],
-        price: tyre.price || '',
-        originalPrice: tyre.originalPrice || '',
-        discount: tyre.discount || '',
-        size: tyre.size || '',
-        type: tyre.type || '',
-        pattern: tyre.pattern || '',
-        compound: tyre.compound || '',
-        maxLoad: tyre.maxLoad || '',
-        maxSpeed: tyre.maxSpeed || '',
+        price: tyre.price || "",
+        originalPrice: tyre.originalPrice || "",
+        discount: tyre.discount || "",
+        size: tyre.size || "",
+        type: tyre.type || "",
+        pattern: tyre.pattern || "",
+        compound: tyre.compound || "",
+        maxLoad: tyre.maxLoad || "",
+        maxSpeed: tyre.maxSpeed || "",
         offers: tyre.offers || [],
-        features: tyre.features || []
+        features: tyre.features || [],
       });
     } else {
       // Reset form for new tyre
       setFormData({
-        brand: '',
-        model: '',
+        brand: "",
+        model: "",
         images: [],
-        price: '',
-        originalPrice: '',
-        discount: '',
-        size: '',
-        type: '',
-        pattern: '',
-        compound: '',
-        maxLoad: '',
-        maxSpeed: '',
+        price: "",
+        originalPrice: "",
+        discount: "",
+        size: "",
+        type: "",
+        pattern: "",
+        compound: "",
+        maxLoad: "",
+        maxSpeed: "",
         offers: [],
-        features: []
+        features: [],
       });
     }
   }, [tyre, isOpen]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleArrayInput = (field, value) => {
-    const arrayValue = value.split(',').map(item => item.trim()).filter(item => item);
-    setFormData(prev => ({ ...prev, [field]: arrayValue }));
+    const arrayValue = value
+      .split(",")
+      .map((item) => item.trim())
+      .filter((item) => item);
+    setFormData((prev) => ({ ...prev, [field]: arrayValue }));
   };
 
   const handleSubmit = (e) => {
@@ -171,9 +198,9 @@ const TyreFormModal = ({ isOpen, onClose, onSubmit, tyre = null, isLoading }) =>
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900">
-              {tyre ? 'Edit Tyre' : 'Add New Tyre'}
+              {tyre ? "Edit Tyre" : "Add New Tyre"}
             </h2>
-            <button 
+            <button
               onClick={onClose}
               className="text-gray-500 hover:text-gray-700"
             >
@@ -347,8 +374,8 @@ const TyreFormModal = ({ isOpen, onClose, onSubmit, tyre = null, isLoading }) =>
               </label>
               <input
                 type="text"
-                value={formData.images.join(', ')}
-                onChange={(e) => handleArrayInput('images', e.target.value)}
+                value={formData.images.join(", ")}
+                onChange={(e) => handleArrayInput("images", e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="tyre1.jpg, tyre2.jpg"
               />
@@ -359,8 +386,8 @@ const TyreFormModal = ({ isOpen, onClose, onSubmit, tyre = null, isLoading }) =>
                 Offers (comma-separated)
               </label>
               <textarea
-                value={formData.offers.join(', ')}
-                onChange={(e) => handleArrayInput('offers', e.target.value)}
+                value={formData.offers.join(", ")}
+                onChange={(e) => handleArrayInput("offers", e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 rows="3"
                 placeholder="Free installation, Extended warranty, Old tyre exchange"
@@ -372,8 +399,8 @@ const TyreFormModal = ({ isOpen, onClose, onSubmit, tyre = null, isLoading }) =>
                 Features (comma-separated)
               </label>
               <textarea
-                value={formData.features.join(', ')}
-                onChange={(e) => handleArrayInput('features', e.target.value)}
+                value={formData.features.join(", ")}
+                onChange={(e) => handleArrayInput("features", e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 rows="3"
                 placeholder="All-weather performance, Enhanced grip, Low noise"
@@ -399,7 +426,7 @@ const TyreFormModal = ({ isOpen, onClose, onSubmit, tyre = null, isLoading }) =>
                 ) : (
                   <Save className="w-4 h-4" />
                 )}
-                {tyre ? 'Update Tyre' : 'Add Tyre'}
+                {tyre ? "Update Tyre" : "Add Tyre"}
               </button>
             </div>
           </form>
@@ -410,7 +437,13 @@ const TyreFormModal = ({ isOpen, onClose, onSubmit, tyre = null, isLoading }) =>
 };
 
 // Delete Confirmation Modal
-const DeleteConfirmModal = ({ isOpen, onClose, onConfirm, tyreName, isLoading }) => {
+const DeleteConfirmModal = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  tyreName,
+  isLoading,
+}) => {
   if (!isOpen) return null;
 
   return (
@@ -420,11 +453,12 @@ const DeleteConfirmModal = ({ isOpen, onClose, onConfirm, tyreName, isLoading })
           <AlertTriangle className="w-6 h-6 text-red-500" />
           <h2 className="text-xl font-bold text-gray-900">Delete Tyre</h2>
         </div>
-        
+
         <p className="text-gray-600 mb-6">
-          Are you sure you want to delete <strong>{tyreName}</strong>? This action cannot be undone.
+          Are you sure you want to delete <strong>{tyreName}</strong>? This
+          action cannot be undone.
         </p>
-        
+
         <div className="flex justify-end gap-3">
           <button
             onClick={onClose}
@@ -477,13 +511,13 @@ const TyreDisplay = () => {
   const [error, setError] = useState(null);
   const [selectedTyre, setSelectedTyre] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
-    priceRange: { min: '', max: '' },
+    priceRange: { min: "", max: "" },
     brands: [],
-    vehicleType: 'All',
-    tyreType: 'All'
+    vehicleType: "All",
+    tyreType: "All",
   });
 
   // Admin states
@@ -493,14 +527,18 @@ const TyreDisplay = () => {
   const [deletingTyre, setDeletingTyre] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const API_BASE_URL = 'http://localhost:5000/api/tyres';
+  // Show More State
+  const [showAllTyres, setShowAllTyres] = useState(false);
+  const INITIAL_DISPLAY_COUNT = 8;
+
+  const API_BASE_URL = "http://localhost:5000/api/tyres";
 
   // API helper function
   const apiCall = async (method, url, data = null) => {
     const config = {
       method,
       url: `http://localhost:5000${url}`,
-      headers: {}
+      headers: {},
     };
 
     if (token && isAdmin) {
@@ -509,71 +547,100 @@ const TyreDisplay = () => {
 
     if (data) {
       config.data = data;
-      config.headers['Content-Type'] = 'application/json';
+      config.headers["Content-Type"] = "application/json";
     }
 
     return axios(config);
   };
 
-   // Fetch Tyres from MongoDB
-    useEffect(() => {
-      const fetchTyres= async () => {
-        try {
-          setLoading(true);
-          const response = await apiCall('GET', '/api/tyres');
-          setTyres(response.data);
-          setError(null);
-        } catch (err) {
-          console.error('Error fetching bikes:', err);
-          setError('Failed to load bikes. Please try again later.');
-        } finally {
-          setLoading(false);
-        }
-      };
-  
-      fetchTyres();
-    }, []);
+  // Fetch Tyres from MongoDB
+  useEffect(() => {
+    const fetchTyres = async () => {
+      try {
+        setLoading(true);
+        const response = await apiCall("GET", "/api/tyres");
+        setTyres(response.data);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching bikes:", err);
+        setError("Failed to load bikes. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTyres();
+  }, []);
 
   // Helper functions
   const getVehicleType = (size) => {
-    if (!size) return 'Other';
-    const sizeNum = parseInt(size.split('/')[0]);
-    if (sizeNum <= 175) return 'Bike';
-    if (sizeNum <= 215) return 'Car';
-    return 'Other';
+    if (!size) return "Other";
+    const sizeNum = parseInt(size.split("/")[0]);
+    if (sizeNum <= 175) return "Bike";
+    if (sizeNum <= 215) return "Car";
+    return "Other";
   };
 
   const extractPriceValue = (priceString) => {
     if (!priceString) return 0;
     const match = priceString.match(/[\d,]+/);
-    return match ? parseInt(match[0].replace(/,/g, '')) : 0;
+    return match ? parseInt(match[0].replace(/,/g, "")) : 0;
   };
 
-  const availableBrands = [...new Set(tyres.map(tyre => tyre.brand).filter(Boolean))];
-  const availableTypes = [...new Set(tyres.map(tyre => tyre.type).filter(Boolean))];
+  const availableBrands = [
+    ...new Set(tyres.map((tyre) => tyre.brand).filter(Boolean)),
+  ];
+  const availableTypes = [
+    ...new Set(tyres.map((tyre) => tyre.type).filter(Boolean)),
+  ];
 
   // Filter and search tyres
   const filteredTyres = useMemo(() => {
-    return tyres.filter(tyre => {
-      const matchesSearch = 
+    return tyres.filter((tyre) => {
+      const matchesSearch =
         tyre.brand?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         tyre.model?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         tyre.size?.toLowerCase().includes(searchTerm.toLowerCase());
-      
+
       const priceValue = extractPriceValue(tyre.price);
-      const matchesPrice = (!filters.priceRange.min || priceValue >= parseInt(filters.priceRange.min)) &&
-                          (!filters.priceRange.max || priceValue <= parseInt(filters.priceRange.max));
-      
-      const matchesBrand = filters.brands.length === 0 || filters.brands.includes(tyre.brand);
-      
+      const matchesPrice =
+        (!filters.priceRange.min ||
+          priceValue >= parseInt(filters.priceRange.min)) &&
+        (!filters.priceRange.max ||
+          priceValue <= parseInt(filters.priceRange.max));
+
+      const matchesBrand =
+        filters.brands.length === 0 || filters.brands.includes(tyre.brand);
+
       const vehicleType = getVehicleType(tyre.size);
-      const matchesVehicleType = filters.vehicleType === 'All' || vehicleType === filters.vehicleType;
-      
-      const matchesTyreType = filters.tyreType === 'All' || tyre.type === filters.tyreType;
-      
-      return matchesSearch && matchesPrice && matchesBrand && matchesVehicleType && matchesTyreType;
+      const matchesVehicleType =
+        filters.vehicleType === "All" || vehicleType === filters.vehicleType;
+
+      const matchesTyreType =
+        filters.tyreType === "All" || tyre.type === filters.tyreType;
+
+      return (
+        matchesSearch &&
+        matchesPrice &&
+        matchesBrand &&
+        matchesVehicleType &&
+        matchesTyreType
+      );
     });
   }, [searchTerm, filters, tyres]);
+
+  // Get tyres to display based on show more state
+  const tyreToDisplay = useMemo(() => {
+    if (showAllTyres) {
+      return filteredTyres;
+    }
+    return filteredTyres.slice(0, INITIAL_DISPLAY_COUNT);
+  }, [filteredTyres, showAllTyres]);
+
+  // Reset show more state when filters change
+  useEffect(() => {
+    setShowAllTyres(false);
+  }, [searchTerm, filters]);
 
   // Admin Functions
   const handleAddTyre = () => {
@@ -597,21 +664,27 @@ const TyreDisplay = () => {
       let response;
       if (editingTyre) {
         // Update existing tyre
-        response = await apiCall('PUT', `/api/tyres/${editingTyre._id}`, formData);
-        setTyres(prev => prev.map(tyre => 
-          tyre._id === editingTyre._id ? response.data.tyre : tyre
-        ));
+        response = await apiCall(
+          "PUT",
+          `/api/tyres/${editingTyre._id}`,
+          formData
+        );
+        setTyres((prev) =>
+          prev.map((tyre) =>
+            tyre._id === editingTyre._id ? response.data.tyre : tyre
+          )
+        );
       } else {
         // Add new tyre
-        response = await apiCall('POST', '/api/tyres', formData);
-        setTyres(prev => [...prev, response.data.tyre]);
+        response = await apiCall("POST", "/api/tyres", formData);
+        setTyres((prev) => [...prev, response.data.tyre]);
       }
-      
+
       setIsFormModalOpen(false);
       setEditingTyre(null);
     } catch (error) {
-      console.error('Error submitting form:', error);
-      setError('Failed to save tyre. Please try again.');
+      console.error("Error submitting form:", error);
+      setError("Failed to save tyre. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -620,13 +693,13 @@ const TyreDisplay = () => {
   const handleConfirmDelete = async () => {
     setIsSubmitting(true);
     try {
-      await apiCall('DELETE', `/api/tyres/${deletingTyre._id}`);
-      setTyres(prev => prev.filter(tyre => tyre._id !== deletingTyre._id));
+      await apiCall("DELETE", `/api/tyres/${deletingTyre._id}`);
+      setTyres((prev) => prev.filter((tyre) => tyre._id !== deletingTyre._id));
       setIsDeleteModalOpen(false);
       setDeletingTyre(null);
     } catch (error) {
-      console.error('Error deleting tyre:', error);
-      setError('Failed to delete tyre. Please try again.');
+      console.error("Error deleting tyre:", error);
+      setError("Failed to delete tyre. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -635,9 +708,10 @@ const TyreDisplay = () => {
   const handleCheckOffers = (tyre) => {
     const modalTyreData = {
       brand: `${tyre.brand} ${tyre.model}`,
-      images: tyre.images && tyre.images.length > 0 
-        ? tyre.images.map(img => `/images/tyres/${img}`)
-        : ["/api/placeholder/400/300"],
+      images:
+        tyre.images && tyre.images.length > 0
+          ? tyre.images.map((img) => `/images/tyres/${img}`)
+          : ["/api/placeholder/400/300"],
       price: tyre.price,
       compound: tyre.compound,
       type: tyre.type || "N/A",
@@ -653,10 +727,10 @@ const TyreDisplay = () => {
         "Free installation available",
         "Wheel alignment check included",
         "Extended warranty available",
-        "Old tyre exchange discount"
-      ]
+        "Old tyre exchange discount",
+      ],
     };
-    
+
     setSelectedTyre(modalTyreData);
     setIsModalOpen(true);
   };
@@ -667,29 +741,36 @@ const TyreDisplay = () => {
   };
 
   const handleBrandFilter = (brand) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      brands: prev.brands.includes(brand) 
-        ? prev.brands.filter(b => b !== brand)
-        : [...prev.brands, brand]
+      brands: prev.brands.includes(brand)
+        ? prev.brands.filter((b) => b !== brand)
+        : [...prev.brands, brand],
     }));
   };
 
   const clearFilters = () => {
     setFilters({
-      priceRange: { min: '', max: '' },
+      priceRange: { min: "", max: "" },
       brands: [],
-      vehicleType: 'All',
-      tyreType: 'All'
+      vehicleType: "All",
+      tyreType: "All",
     });
-    setSearchTerm('');
+    setSearchTerm("");
   };
 
-  const hasActiveFilters = searchTerm || 
-    filters.priceRange.min || filters.priceRange.max || 
-    filters.brands.length > 0 || 
-    filters.vehicleType !== 'All' || 
-    filters.tyreType !== 'All';
+  const hasActiveFilters =
+    searchTerm ||
+    filters.priceRange.min ||
+    filters.priceRange.max ||
+    filters.brands.length > 0 ||
+    filters.vehicleType !== "All" ||
+    filters.tyreType !== "All";
+
+  // Show More / Show Less handlers
+  const handleToggleShowMore = () => {
+    setShowAllTyres(!showAllTyres);
+  };
 
   // Loading state
   if (loading) {
@@ -714,7 +795,7 @@ const TyreDisplay = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center py-20">
             <div className="text-red-500 text-lg mb-4">{error}</div>
-            <button 
+            <button
               onClick={() => window.location.reload()}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
             >
@@ -730,25 +811,29 @@ const TyreDisplay = () => {
     <>
       <div className="bg-white/15 backdrop-blur-sm py-12 px-4 relative border border-white/25 shadow-xl">
         {/* Burnout tire marks pattern */}
-        <div 
+        <div
           className="absolute inset-0 opacity-12 pointer-events-none"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='400' height='80' viewBox='0 0 400 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23000000'%3E%3C!-- Straight tire marks --%3E%3Cpath d='M0 25 Q50 20 100 25 Q150 30 200 25 Q250 20 300 25 Q350 30 400 25' stroke-width='10' opacity='0.4' stroke-linecap='round'/%3E%3Cpath d='M0 35 Q50 30 100 35 Q150 40 200 35 Q250 30 300 35 Q350 40 400 35' stroke-width='8' opacity='0.3' stroke-linecap='round'/%3E%3Cpath d='M0 55 Q50 50 100 55 Q150 60 200 55 Q250 50 300 55 Q350 60 400 55' stroke-width='10' opacity='0.4' stroke-linecap='round'/%3E%3Cpath d='M0 65 Q50 60 100 65 Q150 70 200 65 Q250 60 300 65 Q350 70 400 65' stroke-width='8' opacity='0.3' stroke-linecap='round'/%3E%3C!-- Tire tread marks --%3E%3Cg opacity='0.3'%3E%3Crect x='10' y='23' width='3' height='4'/%3E%3Crect x='18' y='24' width='3' height='3'/%3E%3Crect x='26' y='23' width='3' height='4'/%3E%3Crect x='34' y='24' width='3' height='3'/%3E%3Crect x='42' y='23' width='3' height='4'/%3E%3Crect x='50' y='24' width='3' height='3'/%3E%3Crect x='58' y='23' width='3' height='4'/%3E%3Crect x='66' y='24' width='3' height='3'/%3E%3Crect x='74' y='23' width='3' height='4'/%3E%3Crect x='82' y='24' width='3' height='3'/%3E%3Crect x='90' y='23' width='3' height='4'/%3E%3Crect x='98' y='24' width='3' height='3'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            backgroundSize: '600px 120px',
-            backgroundRepeat: 'repeat-x'
+            backgroundSize: "600px 120px",
+            backgroundRepeat: "repeat-x",
           }}
         />
-        
+
         <div className="max-w-7xl mx-auto relative z-10">
           {/* Section Title with Admin Controls */}
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold text-gray-900">OUR TOP SELLING TYRES</h2>
-            
+            <h2 className="text-2xl font-bold text-gray-900">
+              OUR TOP SELLING TYRES
+            </h2>
+
             {/* Admin Status and Controls */}
             <div className="flex items-center gap-4">
               {isAdmin && (
                 <>
-                  <span className="text-sm text-green-600 font-medium">Admin Mode</span>
+                  <span className="text-sm text-green-600 font-medium">
+                    Admin Mode
+                  </span>
                   <button
                     onClick={handleAddTyre}
                     className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
@@ -778,12 +863,18 @@ const TyreDisplay = () => {
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className={`flex items-center gap-2 px-6 py-3 border rounded-lg transition-colors ${
-                  showFilters ? 'bg-blue-50 border-blue-500 text-blue-600' : 'border-gray-300 hover:bg-gray-50'
+                  showFilters
+                    ? "bg-blue-50 border-blue-500 text-blue-600"
+                    : "border-gray-300 hover:bg-gray-50"
                 }`}
               >
                 <Filter className="w-5 h-5" />
                 Filters
-                <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+                <ChevronDown
+                  className={`w-4 h-4 transition-transform ${
+                    showFilters ? "rotate-180" : ""
+                  }`}
+                />
               </button>
             </div>
 
@@ -793,10 +884,17 @@ const TyreDisplay = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {/* Vehicle Type */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Vehicle Type</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Vehicle Type
+                    </label>
                     <select
                       value={filters.vehicleType}
-                      onChange={(e) => setFilters(prev => ({ ...prev, vehicleType: e.target.value }))}
+                      onChange={(e) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          vehicleType: e.target.value,
+                        }))
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                     >
                       <option value="All">All Types</option>
@@ -808,41 +906,62 @@ const TyreDisplay = () => {
 
                   {/* Tyre Type */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Tyre Type</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Tyre Type
+                    </label>
                     <select
                       value={filters.tyreType}
-                      onChange={(e) => setFilters(prev => ({ ...prev, tyreType: e.target.value }))}
+                      onChange={(e) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          tyreType: e.target.value,
+                        }))
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                     >
                       <option value="All">All Types</option>
-                      {availableTypes.map(type => (
-                        <option key={type} value={type}>{type}</option>
+                      {availableTypes.map((type) => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
                       ))}
                     </select>
                   </div>
 
                   {/* Price Range */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Price Range (₹)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Price Range (₹)
+                    </label>
                     <div className="flex gap-2">
                       <input
                         type="number"
                         placeholder="Min"
                         value={filters.priceRange.min}
-                        onChange={(e) => setFilters(prev => ({
-                          ...prev,
-                          priceRange: { ...prev.priceRange, min: e.target.value }
-                        }))}
+                        onChange={(e) =>
+                          setFilters((prev) => ({
+                            ...prev,
+                            priceRange: {
+                              ...prev.priceRange,
+                              min: e.target.value,
+                            },
+                          }))
+                        }
                         className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                       />
                       <input
                         type="number"
                         placeholder="Max"
                         value={filters.priceRange.max}
-                        onChange={(e) => setFilters(prev => ({
-                          ...prev,
-                          priceRange: { ...prev.priceRange, max: e.target.value }
-                        }))}
+                        onChange={(e) =>
+                          setFilters((prev) => ({
+                            ...prev,
+                            priceRange: {
+                              ...prev.priceRange,
+                              max: e.target.value,
+                            },
+                          }))
+                        }
                         className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                       />
                     </div>
@@ -850,9 +969,11 @@ const TyreDisplay = () => {
 
                   {/* Brand Filter */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Brand</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Brand
+                    </label>
                     <div className="space-y-2 max-h-32 overflow-y-auto">
-                      {availableBrands.map(brand => (
+                      {availableBrands.map((brand) => (
                         <label key={brand} className="flex items-center">
                           <input
                             type="checkbox"
@@ -860,7 +981,9 @@ const TyreDisplay = () => {
                             onChange={() => handleBrandFilter(brand)}
                             className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                           />
-                          <span className="ml-2 text-sm text-gray-700">{brand}</span>
+                          <span className="ml-2 text-sm text-gray-700">
+                            {brand}
+                          </span>
                         </label>
                       ))}
                     </div>
@@ -896,24 +1019,28 @@ const TyreDisplay = () => {
                         Search: "{searchTerm}"
                       </span>
                     )}
-                    {filters.brands.map(brand => (
-                      <span key={brand} className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                    {filters.brands.map((brand) => (
+                      <span
+                        key={brand}
+                        className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full"
+                      >
                         {brand}
                       </span>
                     ))}
-                    {filters.vehicleType !== 'All' && (
+                    {filters.vehicleType !== "All" && (
                       <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
                         {filters.vehicleType}
                       </span>
                     )}
-                    {filters.tyreType !== 'All' && (
+                    {filters.tyreType !== "All" && (
                       <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
                         Type: {filters.tyreType}
                       </span>
                     )}
                     {(filters.priceRange.min || filters.priceRange.max) && (
                       <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
-                        Price: ₹{filters.priceRange.min || '0'} - ₹{filters.priceRange.max || '∞'}
+                        Price: ₹{filters.priceRange.min || "0"} - ₹
+                        {filters.priceRange.max || "∞"}
                       </span>
                     )}
                   </div>
@@ -921,14 +1048,14 @@ const TyreDisplay = () => {
               )}
             </div>
           </div>
-                   
+
           {/* Tyres Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
-            {filteredTyres.length > 0 ? (
-              filteredTyres.map((tyre) => (
-                <TyreCard 
-                  key={tyre._id} 
-                  tyre={tyre} 
+            {tyreToDisplay.length > 0 ? (
+              tyreToDisplay.map((tyre) => (
+                <TyreCard
+                  key={tyre._id}
+                  tyre={tyre}
                   onCheckOffers={handleCheckOffers}
                   onEdit={handleEditTyre}
                   onDelete={handleDeleteTyre}
@@ -937,16 +1064,41 @@ const TyreDisplay = () => {
               ))
             ) : (
               <div className="col-span-full text-center py-12">
-                <p className="text-gray-500 text-lg mb-4">No tyres found matching your criteria</p>
+                <p className="text-gray-500 text-lg mb-4">
+                  No tyres found matching your criteria
+                </p>
                 <button
                   onClick={clearFilters}
-                  className="text-blue-600 hover:text-blue-700 font-medium">
+                  className="text-blue-600 hover:text-blue-700 font-medium"
+                >
                   Clear filters to see all tyres
                 </button>
               </div>
             )}
           </div>
-                   
+
+          {/* Show More / Show Less Button */}
+        {filteredTyres.length > INITIAL_DISPLAY_COUNT && (
+          <div className="flex justify-center mb-8">
+            <button
+              onClick={handleToggleShowMore}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg text-lg transition-colors duration-200"
+            >
+              {showAllTyres ? (
+                <>
+                  <EyeOff className="w-5 h-5" />
+                  Show Less
+                </>
+              ) : (
+                <>
+                  <Eye className="w-5 h-5" />
+                  Show More ({filteredTyres.length - INITIAL_DISPLAY_COUNT} more)
+                </>
+              )}
+            </button>
+          </div>
+        )}
+
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <button className="bg-red-500 hover:bg-red-600 text-white font-semibold py-4 px-8 rounded-lg text-lg transition-colors duration-200 min-w-48">
@@ -978,14 +1130,16 @@ const TyreDisplay = () => {
           setDeletingTyre(null);
         }}
         onConfirm={handleConfirmDelete}
-        tyreName={deletingTyre ? `${deletingTyre.brand} ${deletingTyre.model}` : ''}
+        tyreName={
+          deletingTyre ? `${deletingTyre.brand} ${deletingTyre.model}` : ""
+        }
         isLoading={isSubmitting}
       />
 
       {/* Show Offer Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50">
-          <ShowOfferTyre 
+          <ShowOfferTyre
             isOpen={isModalOpen}
             onClose={closeModal}
             tyreData={selectedTyre}
