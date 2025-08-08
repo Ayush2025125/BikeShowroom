@@ -55,6 +55,11 @@ const tyreSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+   priority: {
+    type: Number,
+    default: 1,
+    min: 1
   }
 });
 

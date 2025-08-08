@@ -3,10 +3,20 @@ const Tyre = require("../models/Tyres");
 
 exports.getAllTyres = async (req, res) => {
   try {
-    const tyres = await Tyre.find();
+    const tyres = await Tyre.find().sort({ priority: 1 });
     res.status(200).json(tyres);
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
+  }
+};
+
+exports.getTop3Tyres = async (req, res) => {
+  try { 
+    const tyres = await Tyre.find().sort({ priority: 1 }).limit(3);
+    res.status(200).json(tyres);
+  } catch (error) {
+    console.error("Error in getTop3Tyres:", error);
+    res.status(500).json({ error: "Failed to fetch top 3 Tyres." });
   }
 };
 

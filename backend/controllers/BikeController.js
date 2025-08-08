@@ -2,10 +2,19 @@ const Bike = require("../models/Bikes");
 
 exports.getAllBikes = async (req, res) => {
   try {
-    const bikes = await Bike.find();
+    const bikes = await Bike.find().sort({ priority: 1 }); 
     res.status(200).json(bikes);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch bikes." });
+  }
+};
+
+exports.getTop3Bikes = async (req, res) => {
+  try {
+    const bikes = await Bike.find().sort({ priority: 1 }).limit(3); 
+    res.status(200).json(bikes);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch top 3 bikes." });
   }
 };
 

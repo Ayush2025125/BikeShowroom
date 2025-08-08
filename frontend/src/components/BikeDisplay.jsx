@@ -702,7 +702,7 @@ const BikeDisplay = () => {
       <div className="max-w-7xl mx-auto">
         {/* Section Title with Admin Controls */}
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">OUR TOP SELLINGS</h2>
+          <h2 className="text-2xl font-bold text-gray-900">OUR PREMIUM COLLECTION</h2>
           
           {/* Admin Status and Controls */}
           <div className="flex items-center gap-4">

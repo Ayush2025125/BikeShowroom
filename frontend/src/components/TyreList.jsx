@@ -1,39 +1,44 @@
-import React from "react";
-import { tyreData } from "../data/TyreData";
-import { TyreCard } from "./ui/TyreCard";
+import React, { useState, useEffect } from "react";
+import TyreCard from "./ui/TyreCard";
 
-export default function TyreList() {
-  const handleCall = (tyreName) => {
-    console.log(`Calling for ${tyreName}`);
-    alert(`Calling for ${tyreName}`);
-  };
+const TyreList = () => {
+  const [tyres, setTyres] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleBook = (tyreName) => {
-    console.log(`Booking ${tyreName}`);
-    alert(`Booking ${tyreName}`);
-  };
+  useEffect(() => {
+    const fetchTyres = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/tyres/get/top3");
+        const data = await res.json();
+        setTyres(data);
+      } catch (error) {
+        console.error("Error fetching tyres:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTyres();
+  }, []);
+
+  if (loading) {
+    return <p className="text-center text-gray-500">Loading tyres...</p>;
+  }
 
   return (
-    <div className="bg-gray-50 py-6 px-4 sm:px-10">
-      <div className="max-w-7xl mx-auto">
-      
-        {/* Tyre Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {tyreData.map((tyre, index) => (
-            <TyreCard
-              key={index}
-              name={tyre.name}
-              image={tyre.image}
-              pricing={tyre.pricing}
-              specs={tyre.specs}
-              features={tyre.features}
-              onCallClick={() => handleCall(tyre.name)}
-              onBookClick={() => handleBook(tyre.name)}
-            />
-          ))}
-        </div>
-
+    <section className="py-3 rounded-xl ">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        {tyres.map((tyre) => (
+          <TyreCard
+            key={tyre._id}
+            name={`${tyre.brand} ${tyre.model}`}
+            price={tyre.price}
+            image={tyre.images[0]}
+          />
+        ))}
       </div>
-    </div>
+    </section>
   );
-}
+};
+
+export default TyreList;

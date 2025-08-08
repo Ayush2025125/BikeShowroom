@@ -8,6 +8,9 @@ router.get("/", tyreController.getAllTyres);
 // GET a single tyre by ID
 router.get("/:id", tyreController.getTyreById);
 
+//GET top 3 tyres
+router.get("/get/top3", tyreController.getTop3Tyres);
+
 // POST a new tyre
 router.post("/", tyreController.createTyre);
 

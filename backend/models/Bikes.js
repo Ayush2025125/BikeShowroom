@@ -60,6 +60,11 @@ const bikeSchema = new mongoose.Schema({
   image: {
     type: String,
     required: true 
+  },
+  priority: {
+    type: Number,
+    default: 1,
+    min: 1
   }
 });
 
