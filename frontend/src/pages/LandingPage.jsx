@@ -127,7 +127,7 @@ function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-white to-gray-200">
+    <div className="min-h-screen bg-square-grid">
       <Header />
 
       <main className="overflow-x-hidden">
