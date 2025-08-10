@@ -165,7 +165,7 @@ const ShowOfferTyre = ({ isOpen, onClose, tyreData }) => {
                       onClick={() => setCurrentImageIndex(index)}
                       className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all ${
                         index === currentImageIndex
-                          ? "bg-blue-500"
+                          ? "bg-orange-500"
                           : "bg-white bg-opacity-50"
                       }`}
                       aria-label={`Go to image ${index + 1}`}
@@ -196,7 +196,7 @@ const ShowOfferTyre = ({ isOpen, onClose, tyreData }) => {
                 </div>
               )}
               <p className="text-gray-600 text-sm sm:text-base">
-                Size: <span className="font-semibold text-blue-600">{tyreData.size}</span>
+                Size: <span className="font-semibold text-orange-600">{tyreData.size}</span>
               </p>
             </div>
 
@@ -267,9 +267,9 @@ const ShowOfferTyre = ({ isOpen, onClose, tyreData }) => {
                   {tyreOffers.map((offer, index) => (
                     <div
                       key={index}
-                      className="flex items-center p-3 bg-blue-50 rounded-lg"
+                      className="flex items-center p-3 bg-orange-50 rounded-lg"
                     >
-                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3 flex-shrink-0"></div>
+                      <div className="w-2 h-2 bg-orange-500 rounded-full mr-3 flex-shrink-0"></div>
                       <p className="text-xs sm:text-sm text-gray-700">{offer}</p>
                     </div>
                   ))}
@@ -281,11 +281,11 @@ const ShowOfferTyre = ({ isOpen, onClose, tyreData }) => {
 
         {/* Bottom Action Buttons */}
         <div className="flex gap-4 p-4 sm:p-6 border-t border-gray-200 bg-gray-50 flex-shrink-0">
-          <button className="flex-1 bg-white border-2 border-blue-500 text-blue-500 py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
+          <button className="flex-1 bg-white border-2 border-orange-500 text-orange-500 py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-orange-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
             <Phone size={16} className="sm:w-[18px] sm:h-[18px]" />
             Contact Us
           </button>
-          <button className="flex-1 bg-blue-500 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-blue-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
+          <button className="flex-1 bg-orange-500 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
             <Heart size={16} className="sm:w-[18px] sm:h-[18px]" />
             Interested
           </button>

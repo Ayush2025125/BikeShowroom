@@ -106,8 +106,9 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
         {/* Main Content - Mobile: column (image top, info bottom), Desktop: row */}
         <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
           {/* Image Section - Shows first on mobile, right side on desktop */}
-          <div className="w-full lg:w-1/2 bg-gray-100 relative h-[250px] lg:h-auto lg:order-2">
-            <div className="h-full flex items-center justify-center relative p-4">
+          <div className="w-full lg:w-1/2 bg-gray-100 relative h-[250px] lg:h-auto lg:order-2 flex flex-col">
+            {/* Main Image Display */}
+            <div className="flex-1 flex items-center justify-center relative p-4">
               {bike.images && bike.images.length > 0 ? (
                 <img
                   src={bike.images[currentImageIndex]}
@@ -144,24 +145,33 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
                 </>
               )}
 
-              {/* Image Indicators */}
+              {/* Image Counter */}
               {bike.images && bike.images.length > 1 && (
-                <div className="absolute bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                  {bike.images.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all ${
-                        index === currentImageIndex
-                          ? "bg-blue-500"
-                          : "bg-white bg-opacity-50"
-                      }`}
-                      aria-label={`Go to image ${index + 1}`}
-                    />
-                  ))}
+                <div className="absolute top-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded-full text-xs">
+                  {currentImageIndex + 1} / {bike.images.length}
                 </div>
               )}
             </div>
+
+          
+
+            {/* Dot Indicators (hidden when thumbnails are shown) */}
+            {bike.images && bike.images.length > 1 && bike.images.length <= 5 && (
+              <div className="absolute bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 lg:hidden">
+                {bike.images.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentImageIndex(index)}
+                    className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all ${
+                      index === currentImageIndex
+                        ? "bg-orange-500"
+                        : "bg-white bg-opacity-50"
+                    }`}
+                    aria-label={`Go to image ${index + 1}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Details & Offers Section - Shows second on mobile, left side on desktop */}
@@ -172,7 +182,7 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
                 <span className="text-2xl sm:text-3xl font-bold text-green-600">
                   {bike.price}
                 </span>
-                {bike.originalPrice && (
+                {bike.originalPrice && bike.originalPrice !== bike.price && (
                   <span className="text-base sm:text-lg text-gray-500 line-through">
                     {bike.originalPrice}
                   </span>
@@ -185,7 +195,7 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
               )}
               <p className="text-gray-600 text-sm sm:text-base">
                 EMI starting from{" "}
-                <span className="font-semibold text-blue-600">{bike.emi}</span>
+                <span className="font-semibold text-orange-600">{bike.emi}</span>
               </p>
             </div>
 
@@ -224,9 +234,9 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
                   bike.offers.map((offer, index) => (
                     <div
                       key={index}
-                      className="flex items-center p-3 bg-blue-50 rounded-lg"
+                      className="flex items-center p-3 bg-orange-50 rounded-lg"
                     >
-                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3 flex-shrink-0"></div>
+                      <div className="w-2 h-2 bg-orange-500 rounded-full mr-3 flex-shrink-0"></div>
                       <p className="text-xs sm:text-sm text-gray-700">{offer}</p>
                     </div>
                   ))
@@ -250,11 +260,11 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
                   <span className="text-xs sm:text-sm">24 months</span>
                   <span className="font-semibold text-sm sm:text-base">₹5,800/month</span>
                 </div>
-                <div className="flex justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
-                  <span className="text-xs sm:text-sm text-blue-700">
+                <div className="flex justify-between p-3 bg-orange-50 rounded-lg border border-orange-200">
+                  <span className="text-xs sm:text-sm text-orange-700">
                     36 months (Popular)
                   </span>
-                  <span className="font-semibold text-sm sm:text-base text-blue-700">
+                  <span className="font-semibold text-sm sm:text-base text-orange-700">
                     ₹3,200/month
                   </span>
                 </div>
@@ -265,11 +275,11 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
 
         {/* Bottom Action Buttons - Fixed positioning */}
         <div className="flex gap-4 p-4 sm:p-6 border-t border-gray-200 bg-gray-50 flex-shrink-0">
-          <button className="flex-1 bg-white border-2 border-blue-500 text-blue-500 py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
+          <button className="flex-1 bg-white border-2 border-orange-500 text-orange-500 py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-orange-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
             <Phone size={16} className="sm:w-[18px] sm:h-[18px]" />
             Contact Us
           </button>
-          <button className="flex-1 bg-blue-500 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-blue-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
+          <button className="flex-1 bg-orange-500 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
             <Heart size={16} className="sm:w-[18px] sm:h-[18px]" />
             Interested
           </button>

@@ -28,7 +28,7 @@ const TyreCard = ({ tyre, onCheckOffers, onEdit, onDelete, isAdmin }) => {
               e.stopPropagation();
               onEdit(tyre);
             }}
-            className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors shadow-lg"
+            className="bg-orange-600 text-white p-2 rounded-full hover:bg-orange-700 transition-colors shadow-lg"
             title="Edit Tyre"
           >
             <Edit className="w-4 h-4" />
@@ -96,7 +96,7 @@ const TyreCard = ({ tyre, onCheckOffers, onEdit, onDelete, isAdmin }) => {
         {/* Check Offers Button */}
         <button
           onClick={() => onCheckOffers(tyre)}
-          className="w-full text-blue-600 font-medium text-sm py-2 px-4 border border-blue-600 rounded hover:bg-blue-50 transition-colors duration-200"
+          className="w-full text-orange-600 font-medium text-sm py-2 px-4 border border-orange-600 rounded hover:bg-orange-50 transition-colors duration-200"
         >
           Check Offers
         </button>
@@ -221,7 +221,7 @@ const TyreFormModal = ({
                   value={formData.brand}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
 
@@ -235,7 +235,7 @@ const TyreFormModal = ({
                   value={formData.model}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
 
@@ -250,7 +250,7 @@ const TyreFormModal = ({
                   onChange={handleInputChange}
                   placeholder="e.g., ₹5,000"
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
 
@@ -265,7 +265,7 @@ const TyreFormModal = ({
                   onChange={handleInputChange}
                   placeholder="e.g., 195/65R15"
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
 
@@ -279,7 +279,7 @@ const TyreFormModal = ({
                   value={formData.originalPrice}
                   onChange={handleInputChange}
                   placeholder="e.g., ₹7,000"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
 
@@ -293,7 +293,7 @@ const TyreFormModal = ({
                   value={formData.discount}
                   onChange={handleInputChange}
                   placeholder="e.g., ₹2,000 OFF"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
 
@@ -307,7 +307,7 @@ const TyreFormModal = ({
                   value={formData.type}
                   onChange={handleInputChange}
                   placeholder="e.g., All-Season, Summer, Winter"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
 
@@ -321,7 +321,7 @@ const TyreFormModal = ({
                   value={formData.pattern}
                   onChange={handleInputChange}
                   placeholder="e.g., Directional, Asymmetric"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
 
@@ -335,7 +335,7 @@ const TyreFormModal = ({
                   value={formData.compound}
                   onChange={handleInputChange}
                   placeholder="e.g., Hard, Soft, Medium"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
 
@@ -349,7 +349,7 @@ const TyreFormModal = ({
                   value={formData.maxLoad}
                   onChange={handleInputChange}
                   placeholder="e.g., 91V"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
 
@@ -363,7 +363,7 @@ const TyreFormModal = ({
                   value={formData.maxSpeed}
                   onChange={handleInputChange}
                   placeholder="e.g., 240 km/h"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -376,7 +376,7 @@ const TyreFormModal = ({
                 type="text"
                 value={formData.images.join(", ")}
                 onChange={(e) => handleArrayInput("images", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 placeholder="tyre1.jpg, tyre2.jpg"
               />
             </div>
@@ -388,7 +388,7 @@ const TyreFormModal = ({
               <textarea
                 value={formData.offers.join(", ")}
                 onChange={(e) => handleArrayInput("offers", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 rows="3"
                 placeholder="Free installation, Extended warranty, Old tyre exchange"
               />
@@ -401,7 +401,7 @@ const TyreFormModal = ({
               <textarea
                 value={formData.features.join(", ")}
                 onChange={(e) => handleArrayInput("features", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 rows="3"
                 placeholder="All-weather performance, Enhanced grip, Low noise"
               />
@@ -419,7 +419,7 @@ const TyreFormModal = ({
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -779,7 +779,7 @@ const TyreDisplay = () => {
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center py-20">
             <div className="flex items-center gap-3">
-              <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+              <Loader2 className="w-8 h-8 animate-spin text-orange-600" />
               <span className="text-lg text-gray-600">Loading tyres...</span>
             </div>
           </div>
@@ -797,7 +797,7 @@ const TyreDisplay = () => {
             <div className="text-red-500 text-lg mb-4">{error}</div>
             <button
               onClick={() => window.location.reload()}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
+              className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg transition-colors"
             >
               Retry
             </button>
@@ -857,14 +857,14 @@ const TyreDisplay = () => {
                   placeholder="Search tyres by brand, model, or size..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className={`flex items-center gap-2 px-6 py-3 border rounded-lg transition-colors ${
                   showFilters
-                    ? "bg-blue-50 border-blue-500 text-blue-600"
+                    ? "bg-orange-50 border-orange-500 text-orange-600"
                     : "border-gray-300 hover:bg-gray-50"
                 }`}
               >
@@ -895,7 +895,7 @@ const TyreDisplay = () => {
                           vehicleType: e.target.value,
                         }))
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
                     >
                       <option value="All">All Types</option>
                       <option value="Car">Car</option>
@@ -917,7 +917,7 @@ const TyreDisplay = () => {
                           tyreType: e.target.value,
                         }))
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
                     >
                       <option value="All">All Types</option>
                       {availableTypes.map((type) => (
@@ -947,7 +947,7 @@ const TyreDisplay = () => {
                             },
                           }))
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
                       />
                       <input
                         type="number"
@@ -962,7 +962,7 @@ const TyreDisplay = () => {
                             },
                           }))
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
                       />
                     </div>
                   </div>
@@ -979,7 +979,7 @@ const TyreDisplay = () => {
                             type="checkbox"
                             checked={filters.brands.includes(brand)}
                             onChange={() => handleBrandFilter(brand)}
-                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                           />
                           <span className="ml-2 text-sm text-gray-700">
                             {brand}
@@ -1015,30 +1015,30 @@ const TyreDisplay = () => {
                   <span className="text-sm text-gray-600">Active filters:</span>
                   <div className="flex gap-2 flex-wrap">
                     {searchTerm && (
-                      <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                      <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full">
                         Search: "{searchTerm}"
                       </span>
                     )}
                     {filters.brands.map((brand) => (
                       <span
                         key={brand}
-                        className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full"
+                        className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full"
                       >
                         {brand}
                       </span>
                     ))}
                     {filters.vehicleType !== "All" && (
-                      <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                      <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full">
                         {filters.vehicleType}
                       </span>
                     )}
                     {filters.tyreType !== "All" && (
-                      <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                      <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full">
                         Type: {filters.tyreType}
                       </span>
                     )}
                     {(filters.priceRange.min || filters.priceRange.max) && (
-                      <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                      <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full">
                         Price: ₹{filters.priceRange.min || "0"} - ₹
                         {filters.priceRange.max || "∞"}
                       </span>
@@ -1069,7 +1069,7 @@ const TyreDisplay = () => {
                 </p>
                 <button
                   onClick={clearFilters}
-                  className="text-blue-600 hover:text-blue-700 font-medium"
+                  className="text-orange-600 hover:text-orange-700 font-medium"
                 >
                   Clear filters to see all tyres
                 </button>
@@ -1082,8 +1082,7 @@ const TyreDisplay = () => {
           <div className="flex justify-center mb-8">
             <button
               onClick={handleToggleShowMore}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg text-lg transition-colors duration-200"
-            >
+              className="flex items-center gap-2 bg-gradient-to-r from-[#ffce5a] to-[#eeb61d] hover:bg-gradient-to-r hover:from-[#fac445] hover:to-[#e8b62a] text-white font-semibold py-3 px-6 rounded-full text-lg transition-colors duration-200">
               {showAllTyres ? (
                 <>
                   <EyeOff className="w-5 h-5" />

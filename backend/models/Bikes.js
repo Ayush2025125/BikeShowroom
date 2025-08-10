@@ -3,69 +3,77 @@ const mongoose = require("mongoose");
 const bikeSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
   },
   priceRange: {
     type: String,
-    required: true
+    required: true,
   },
   finalPrice: {
     type: String,
-    required: true
+    required: true,
   },
   discount: {
     type: String,
-    required: true
+    required: true,
   },
   emiStartingFrom: {
     type: String,
-    required: true
+    required: true,
   },
   specs: {
     engine: {
       type: String,
-      required: true
+      required: true,
     },
     mileage: {
       type: String,
-      required: true
+      required: true,
     },
     maxPower: {
       type: String,
-      required: true
+      required: true,
     },
     fuelTank: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   specialOffers: [
     {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   ],
   emiOptions: [
     {
       duration: {
         type: String,
-        required: true
+        required: true,
       },
       amount: {
         type: String,
-        required: true
-      }
-    }
+        required: true,
+      },
+    },
   ],
-  image: {
-    type: String,
-    required: true 
-  },
+  image: [
+    {
+      type: String,
+      required: true,
+    },
+  ],
+  availableColors: [
+    {
+      type: String,
+      required: true,
+    },
+  ],
   priority: {
     type: Number,
     default: 1,
-    min: 1
-  }
+    min: 1,
+  },
 });
 
 module.exports = mongoose.model("Bike", bikeSchema);
