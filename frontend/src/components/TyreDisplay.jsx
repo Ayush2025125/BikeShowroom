@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import ShowOfferTyre from "./modal/ShowOfferTyre";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const TyreCard = ({ tyre, onCheckOffers, onEdit, onDelete, isAdmin }) => {
   return (
@@ -503,6 +504,7 @@ const useLocalStorage = (key, defaultValue = null) => {
 
 const TyreDisplay = () => {
   const token = useLocalStorage("adminToken");
+  const navigate = useNavigate();
   const isAdmin = !!token;
 
   // State management
@@ -1100,10 +1102,10 @@ const TyreDisplay = () => {
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <button className="bg-red-500 hover:bg-red-600 text-white font-semibold py-4 px-8 rounded-lg text-lg transition-colors duration-200 min-w-48">
+            <button onClick={() => navigate("/contact")} className="bg-red-500 hover:bg-red-600 text-white font-semibold py-4 px-8 rounded-lg text-lg transition-colors duration-200 min-w-48">
               CONTACT US
             </button>
-            <button className="bg-gray-800 hover:bg-gray-900 text-white font-semibold py-4 px-8 rounded-lg text-lg transition-colors duration-200 min-w-48">
+            <button onClick={() => navigate("/contact")} className="bg-gray-800 hover:bg-gray-900 text-white font-semibold py-4 px-8 rounded-lg text-lg transition-colors duration-200 min-w-48">
               GET QUOTATION
             </button>
           </div>

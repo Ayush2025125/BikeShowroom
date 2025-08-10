@@ -91,11 +91,18 @@ const ContactUs = () => {
               Have questions about our bikes or services? We're here to help! 
               Reach out to us and we'll get back to you as soon as possible.
             </p>
-            {/* Show bike reference if coming from bike details */}
-            {location.state?.bikeName && (
+            {/* Show product reference if coming from product details */}
+            {(location.state?.bikeName || location.state?.tyreName) && (
               <div className="mt-4 inline-block bg-orange-500 bg-opacity-20 border border-orange-400 rounded-lg px-4 py-2">
                 <p className="text-orange-200 text-sm">
-                  Inquiry about: <span className="font-semibold text-orange-100">{location.state.bikeName}</span>
+                  Inquiry about: <span className="font-semibold text-orange-100">
+                    {location.state?.bikeName || location.state?.tyreName}
+                  </span>
+                  {location.state?.productType && (
+                    <span className="ml-2 text-xs bg-orange-400 bg-opacity-30 px-2 py-1 rounded">
+                      {location.state.productType}
+                    </span>
+                  )}
                 </p>
               </div>
             )}
@@ -113,10 +120,15 @@ const ContactUs = () => {
                 <p className="text-gray-600">
                   Fill out the form below and we'll get back to you within 24 hours.
                 </p>
-                {location.state?.bikeName && (
+                {(location.state?.bikeName || location.state?.tyreName) && (
                   <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
                     <p className="text-orange-800 text-sm">
-                      <span className="font-medium">Regarding:</span> {location.state.bikeName}
+                      <span className="font-medium">Regarding:</span> {location.state?.bikeName || location.state?.tyreName}
+                      {location.state?.productType && (
+                        <span className="ml-2 text-xs bg-orange-200 px-2 py-1 rounded">
+                          {location.state.productType}
+                        </span>
+                      )}
                     </p>
                   </div>
                 )}

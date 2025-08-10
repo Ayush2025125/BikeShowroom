@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useEffect, } from 'react';
 import ShowOffer from '../components/modal/ShowOffer';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 // import { useAuth } from '../context/AuthContext';
 import { Search, Filter, X, ChevronDown, Loader2, Edit, Trash2, Plus, Save, AlertTriangle, Eye, EyeOff } from 'lucide-react';
 
@@ -438,6 +438,7 @@ const useLocalStorage = (key, defaultValue = null) => {
 
 const BikeDisplay = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const token = useLocalStorage("adminToken");
   
@@ -1007,11 +1008,14 @@ const BikeDisplay = () => {
         )}
                  
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <button className="bg-red-500 hover:bg-red-600 text-white font-semibold py-4 px-8 rounded-lg text-lg transition-colors duration-200 min-w-48">
+        <div 
+        className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <button onClick={() => navigate("/contact")}
+          className="bg-red-500 hover:bg-red-600 text-white font-semibold py-4 px-8 rounded-lg text-lg transition-colors duration-200 min-w-48">
             CONTACT US
           </button>
-          <button className="bg-gray-800 hover:bg-gray-900 text-white font-semibold py-4 px-8 rounded-lg text-lg transition-colors duration-200 min-w-48">
+          <button onClick={() => navigate("/contact")}
+          className="bg-gray-800 hover:bg-gray-900 text-white font-semibold py-4 px-8 rounded-lg text-lg transition-colors duration-200 min-w-48">
             GET QUOTATION
           </button>
         </div>

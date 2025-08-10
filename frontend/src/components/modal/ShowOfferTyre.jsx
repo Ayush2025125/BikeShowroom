@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { X, ChevronLeft, ChevronRight, Phone, Heart } from "lucide-react";
+import { useNavigate } from "react-router-dom"; // Add this import
 
 const ShowOfferTyre = ({ isOpen, onClose, tyreData }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const navigate = useNavigate(); // Add this hook
 
   useEffect(() => {
     if (isOpen && tyreData) {
@@ -55,6 +57,60 @@ const ShowOfferTyre = ({ isOpen, onClose, tyreData }) => {
         (prev) => (prev - 1 + tyreImages.length) % tyreImages.length
       );
     }
+  };
+
+  // Handle interested button click
+  const handleInterestedClick = () => {
+    // Create a detailed message with tyre information
+    const tyreDetails = `Hi, I'm interested in the following tyre:
+
+Tyre: ${brand} ${model}
+${price ? `Price: ${formatPrice(price)}` : ''}
+${originalPrice && originalPrice !== price ? `Original Price: ${formatPrice(originalPrice)}` : ''}
+${discount ? `Discount: ${discount}` : ''}
+${size ? `Size: ${size}` : ''}
+
+Specifications:
+${size ? `- Size: ${size}` : ''}
+${type ? `- Type: ${type}` : ''}
+${pattern ? `- Pattern: ${pattern}` : ''}
+${maxSpeed ? `- Max Speed: ${maxSpeed}` : ''}
+${compound ? `- Compound: ${compound}` : ''}
+${maxLoad ? `- Max Load: ${maxLoad}` : ''}
+
+${tyreFeatures.length > 0 ? `Key Features:
+${tyreFeatures.map(feature => `- ${feature}`).join('\n')}` : ''}
+
+${tyreOffers.length > 0 ? `Special Offers:
+${tyreOffers.map(offer => `- ${offer}`).join('\n')}` : ''}
+
+Please provide more information about availability, installation services, and any additional offers.`;
+
+    // Close the modal first
+    onClose();
+
+    // Navigate to contact page with pre-filled message
+    navigate('/contact', { 
+      state: { 
+        prefilledMessage: tyreDetails,
+        tyreName: `${brand} ${model}`,
+        productType: 'tyre'
+      } 
+    });
+  };
+
+  // Handle contact us button click
+  const handleContactClick = () => {
+    // Close the modal first
+    onClose();
+    
+    // Navigate to contact page with tyre name for reference
+    navigate('/contact', { 
+      state: { 
+        tyreName: `${brand} ${model}`,
+        productType: 'tyre'
+      } 
+    });
   };
 
   // Handle escape key press
@@ -281,11 +337,15 @@ const ShowOfferTyre = ({ isOpen, onClose, tyreData }) => {
 
         {/* Bottom Action Buttons */}
         <div className="flex gap-4 p-4 sm:p-6 border-t border-gray-200 bg-gray-50 flex-shrink-0">
-          <button className="flex-1 bg-white border-2 border-orange-500 text-orange-500 py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-orange-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
+          <button 
+            onClick={handleContactClick}
+            className="flex-1 bg-white border-2 border-orange-500 text-orange-500 py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-orange-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
             <Phone size={16} className="sm:w-[18px] sm:h-[18px]" />
             Contact Us
           </button>
-          <button className="flex-1 bg-orange-500 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
+          <button 
+            onClick={handleInterestedClick}
+            className="flex-1 bg-orange-500 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
             <Heart size={16} className="sm:w-[18px] sm:h-[18px]" />
             Interested
           </button>
