@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
+import { useLocation } from 'react-router-dom'; // Add this import
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 const ContactUs = () => {
+  const location = useLocation(); // Add this hook
+  
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -15,6 +18,16 @@ const ContactUs = () => {
   const [status, setStatus] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitType, setSubmitType] = useState(''); 
+
+  // Effect to handle pre-filled message from navigation state
+  useEffect(() => {
+    if (location.state?.prefilledMessage) {
+      setForm(prev => ({
+        ...prev,
+        message: location.state.prefilledMessage
+      }));
+    }
+  }, [location.state]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -78,6 +91,14 @@ const ContactUs = () => {
               Have questions about our bikes or services? We're here to help! 
               Reach out to us and we'll get back to you as soon as possible.
             </p>
+            {/* Show bike reference if coming from bike details */}
+            {location.state?.bikeName && (
+              <div className="mt-4 inline-block bg-orange-500 bg-opacity-20 border border-orange-400 rounded-lg px-4 py-2">
+                <p className="text-orange-200 text-sm">
+                  Inquiry about: <span className="font-semibold text-orange-100">{location.state.bikeName}</span>
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -92,6 +113,13 @@ const ContactUs = () => {
                 <p className="text-gray-600">
                   Fill out the form below and we'll get back to you within 24 hours.
                 </p>
+                {location.state?.bikeName && (
+                  <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                    <p className="text-orange-800 text-sm">
+                      <span className="font-medium">Regarding:</span> {location.state.bikeName}
+                    </p>
+                  </div>
+                )}
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -144,6 +172,9 @@ const ContactUs = () => {
                 <div>
                   <label className="block text-sm font-semibold text-black mb-2">
                     Message
+                    {location.state?.prefilledMessage && (
+                      <span className="text-orange-600 text-xs ml-2">(Pre-filled with bike details)</span>
+                    )}
                   </label>
                   <textarea
                     name="message"
@@ -151,7 +182,7 @@ const ContactUs = () => {
                     value={form.message}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 outline-none resize-none"
-                    rows="5"
+                    rows="8"
                   />
                 </div>
 

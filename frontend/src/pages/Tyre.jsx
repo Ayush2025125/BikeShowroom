@@ -31,7 +31,7 @@ export default function Tyre() {
       />
       
       {/* Content with relative positioning to appear above background */}
-      <div className="relative z-10">
+      <div className="relative z-8">
         <Header />
         <Carousal />
         <TyreDisplay />

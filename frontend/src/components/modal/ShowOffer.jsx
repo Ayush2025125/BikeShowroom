@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { X, ChevronLeft, ChevronRight, Phone, Heart } from "lucide-react";
+import { useNavigate } from "react-router-dom"; // Add this import
 
 const ShowOffer = ({ isOpen, onClose, bikeData }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const navigate = useNavigate(); // Add this hook
 
   useEffect(() => {
     if (isOpen) {
@@ -49,6 +51,54 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
         (prev) => (prev - 1 + bike.images.length) % bike.images.length
       );
     }
+  };
+
+  // Handle interested button click
+  const handleInterestedClick = () => {
+    // Create a detailed message with bike information
+    const bikeDetails = `Hi, I'm interested in the following bike:
+
+Bike: ${bike.name}
+Price: ${bike.price}
+${bike.originalPrice && bike.originalPrice !== bike.price ? `Original Price: ${bike.originalPrice}` : ''}
+${bike.discount ? `Discount: ${bike.discount}` : ''}
+EMI: ${bike.emi}
+
+Specifications:
+- Engine: ${bike.engine}
+- Mileage: ${bike.range}
+- Max Power: ${bike.maxPower}
+- Max Torque: ${bike.maxTorque}
+- Fuel Capacity: ${bike.fuelCapacity}
+
+${bike.offers && bike.offers.length > 0 ? `Special Offers:
+${bike.offers.map(offer => `- ${offer}`).join('\n')}` : ''}
+
+Please provide more information about availability, test drive options, and any additional offers.`;
+
+    // Close the modal first
+    onClose();
+
+    // Navigate to contact page with pre-filled message
+    navigate('/contact', { 
+      state: { 
+        prefilledMessage: bikeDetails,
+        bikeName: bike.name 
+      } 
+    });
+  };
+
+  // Handle contact us button click
+  const handleContactClick = () => {
+    // Close the modal first
+    onClose();
+    
+    // Navigate to contact page with bike name for reference
+    navigate('/contact', { 
+      state: { 
+        bikeName: bike.name 
+      } 
+    });
   };
 
   // Handle escape key press
@@ -152,8 +202,6 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
                 </div>
               )}
             </div>
-
-          
 
             {/* Dot Indicators (hidden when thumbnails are shown) */}
             {bike.images && bike.images.length > 1 && bike.images.length <= 5 && (
@@ -275,11 +323,15 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
 
         {/* Bottom Action Buttons - Fixed positioning */}
         <div className="flex gap-4 p-4 sm:p-6 border-t border-gray-200 bg-gray-50 flex-shrink-0">
-          <button className="flex-1 bg-white border-2 border-orange-500 text-orange-500 py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-orange-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
+          <button 
+            onClick={handleContactClick}
+            className="flex-1 bg-white border-2 border-orange-500 text-orange-500 py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-orange-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
             <Phone size={16} className="sm:w-[18px] sm:h-[18px]" />
             Contact Us
           </button>
-          <button className="flex-1 bg-orange-500 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
+          <button 
+            onClick={handleInterestedClick}
+            className="flex-1 bg-orange-500 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
             <Heart size={16} className="sm:w-[18px] sm:h-[18px]" />
             Interested
           </button>
