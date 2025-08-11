@@ -4,421 +4,10 @@ import ShowOffer from '../components/modal/ShowOffer';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 // import { useAuth } from '../context/AuthContext';
-import { Search, Filter, X, ChevronDown, Loader2, Edit, Trash2, Plus, Save, AlertTriangle, Eye, EyeOff } from 'lucide-react';
-
-
-const BikeCard = ({ bike, onCheckOffers, onEdit, onDelete, isAdmin }) => {
-  return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-      <div className="relative h-48 bg-gradient-to-br from-orange-100 to-orange-100 flex items-center justify-center">
-        <img 
-          src={`/images/bikes/${bike.image[0]}`}
-          alt={bike.name || "Bike Image"}
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            e.target.src = "/api/placeholder/400/300"; 
-          }}
-        />
-        
-        {/* Admin Actions Overlay */}
-        {isAdmin && (
-          <div className="absolute top-2 right-2 flex gap-2">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit(bike);
-              }}
-              className="bg-orange-600 text-white p-2 rounded-full hover:bg-orange-700 transition-colors shadow-lg"
-              title="Edit Bike"
-            >
-              <Edit className="w-4 h-4" />
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(bike);
-              }}
-              className="bg-red-600 text-white p-2 rounded-full hover:bg-red-700 transition-colors shadow-lg"
-              title="Delete Bike"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
-        )}
-      </div>
-       
-      <div className="p-4">
-        <h3 className="font-semibold text-gray-800 text-lg mb-2">{bike.name}</h3>
-                 
-        <div className="text-lg font-bold text-gray-900 mb-2">
-          {bike.finalPrice}
-        </div>
-
-        {bike.priceRange !== bike.finalPrice && (
-          <div className="text-sm text-gray-500 line-through mb-1">
-            {bike.priceRange}
-          </div>
-        )}
-
-        {bike.discount && (
-          <div className="text-sm text-green-600 font-medium mb-2">
-            {bike.discount}
-          </div>
-        )}
-
-        <div className="text-sm text-gray-600 mb-3">
-          EMI from {bike.emiStartingFrom}
-        </div>
-                 
-        <button 
-          onClick={() => onCheckOffers(bike)}
-          className="w-full text-orange-600 font-medium text-sm py-2 px-4 border border-orange-600 rounded hover:bg-orange-50 transition-colors duration-200">
-          Check Offers
-        </button>
-      </div>
-    </div>
-  );
-};
-
-
-// Bike Form Modal Component
-const BikeFormModal = ({ isOpen, onClose, onSubmit, bike = null, isLoading }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    priceRange: '',
-    finalPrice: '',
-    discount: '',
-    emiStartingFrom: '',
-    image: '',
-    specs: {
-      engine: '',
-      mileage: '',
-      maxPower: '',
-      maxTorque: '',
-      fuelTank: ''
-    },
-    specialOffers: [],
-    emiOptions: []
-  });
-
-  useEffect(() => {
-    if (bike) {
-      setFormData({
-        name: bike.name || '',
-        priceRange: bike.priceRange || '',
-        finalPrice: bike.finalPrice || '',
-        discount: bike.discount || '',
-        emiStartingFrom: bike.emiStartingFrom || '',
-        image: bike.image || [],
-        specs: {
-          engine: bike.specs?.engine || '',
-          mileage: bike.specs?.mileage || '',
-          maxPower: bike.specs?.maxPower || '',
-          maxTorque: bike.specs?.maxTorque || '',
-          fuelTank: bike.specs?.fuelTank || ''
-        },
-        specialOffers: bike.specialOffers || [],
-        emiOptions: bike.emiOptions || []
-      });
-    } else {
-      // Reset form for new bike
-      setFormData({
-        name: '',
-        priceRange: '',
-        finalPrice: '',
-        discount: '',
-        emiStartingFrom: '',
-        image: '',
-        specs: {
-          engine: '',
-          mileage: '',
-          maxPower: '',
-          maxTorque: '',
-          fuelTank: ''
-        },
-        specialOffers: [],
-        emiOptions: []
-      });
-    }
-  }, [bike, isOpen]);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    if (name.startsWith('specs.')) {
-      const specField = name.split('.')[1];
-      setFormData(prev => ({
-        ...prev,
-        specs: {
-          ...prev.specs,
-          [specField]: value
-        }
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(formData);
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">
-              {bike ? 'Edit Bike' : 'Add New Bike'}
-            </h2>
-            <button 
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Basic Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Bike Name *
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Image Filename
-                </label>
-                <input
-                  type="text"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleInputChange}
-                  placeholder="e.g., bike1.jpg"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Price Range *
-                </label>
-                <input
-                  type="text"
-                  name="priceRange"
-                  value={formData.priceRange}
-                  onChange={handleInputChange}
-                  placeholder="e.g., ₹1,50,000 - ₹2,00,000"
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Final Price
-                </label>
-                <input
-                  type="text"
-                  name="finalPrice"
-                  value={formData.finalPrice}
-                  onChange={handleInputChange}
-                  placeholder="e.g., ₹1,75,000"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Discount
-                </label>
-                <input
-                  type="text"
-                  name="discount"
-                  value={formData.discount}
-                  onChange={handleInputChange}
-                  placeholder="e.g., Save ₹25,000"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  EMI Starting From
-                </label>
-                <input
-                  type="text"
-                  name="emiStartingFrom"
-                  value={formData.emiStartingFrom}
-                  onChange={handleInputChange}
-                  placeholder="e.g., ₹3,500/month"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                />
-              </div>
-            </div>
-
-            {/* Specifications */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Specifications</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Engine
-                  </label>
-                  <input
-                    type="text"
-                    name="specs.engine"
-                    value={formData.specs.engine}
-                    onChange={handleInputChange}
-                    placeholder="e.g., 149.5cc"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Mileage
-                  </label>
-                  <input
-                    type="text"
-                    name="specs.mileage"
-                    value={formData.specs.mileage}
-                    onChange={handleInputChange}
-                    placeholder="e.g., 50 km/l"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Max Power
-                  </label>
-                  <input
-                    type="text"
-                    name="specs.maxPower"
-                    value={formData.specs.maxPower}
-                    onChange={handleInputChange}
-                    placeholder="e.g., 13.2 hp"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Max Torque
-                  </label>
-                  <input
-                    type="text"
-                    name="specs.maxTorque"
-                    value={formData.specs.maxTorque}
-                    onChange={handleInputChange}
-                    placeholder="e.g., 13.9 Nm"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Fuel Tank Capacity
-                  </label>
-                  <input
-                    type="text"
-                    name="specs.fuelTank"
-                    value={formData.specs.fuelTank}
-                    onChange={handleInputChange}
-                    placeholder="e.g., 12 liters"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Form Actions */}
-            <div className="flex justify-end gap-4 pt-6 border-t">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="flex items-center gap-2 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isLoading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Save className="w-4 h-4" />
-                )}
-                {bike ? 'Update Bike' : 'Add Bike'}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Delete Confirmation Modal
-const DeleteConfirmModal = ({ isOpen, onClose, onConfirm, bikeName, isLoading }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-md w-full p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <AlertTriangle className="w-6 h-6 text-red-500" />
-          <h2 className="text-xl font-bold text-gray-900">Delete Bike</h2>
-        </div>
-        
-        <p className="text-gray-600 mb-6">
-          Are you sure you want to delete <strong>{bikeName}</strong>? This action cannot be undone.
-        </p>
-        
-        <div className="flex justify-end gap-3">
-          <button
-            onClick={onClose}
-            disabled={isLoading}
-            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            disabled={isLoading}
-            className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Trash2 className="w-4 h-4" />
-            )}
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
+import { Search, Filter, X, ChevronDown, Loader2, Plus, Eye, EyeOff } from 'lucide-react';
+import BikeCard from './BikeCard';
+import BikeFormModal from './modal/BikeFormModal';
+import DeleteConfirmModal from './modal/DeleteConfirmModal';
 
 const useLocalStorage = (key, defaultValue = null) => {
   const [value, setValue] = useState(defaultValue);
@@ -439,10 +28,7 @@ const useLocalStorage = (key, defaultValue = null) => {
 const BikeDisplay = () => {
   const location = useLocation();
   const navigate = useNavigate();
-
   const token = useLocalStorage("adminToken");
-  
-
   const isAdmin = !!token;
  
   // const { isAdmin, token, user } = useAuth();
@@ -478,16 +64,13 @@ const BikeDisplay = () => {
       url: `http://localhost:5000${url}`,
       headers: {}
     };
-
     if (token && isAdmin) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
     if (data) {
       config.data = data;
       config.headers['Content-Type'] = 'application/json';
     }
-
     return axios(config);
   };
 
@@ -658,6 +241,7 @@ const BikeDisplay = () => {
     maxPower: bike.specs?.maxPower || "N/A",
     maxTorque: bike.specs?.maxTorque || "N/A",
     fuelCapacity: bike.specs?.fuelTank || "N/A",
+    availableColors: bike.availableColors,
     offers: bike.specialOffers || [
       "Zero down payment available",
       "Exchange bonus up to ₹10,000",
@@ -779,15 +363,12 @@ const BikeDisplay = () => {
                 placeholder="Search bikes by name..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              />
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"/>
             </div>
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 px-6 py-3 border rounded-lg transition-colors ${
-                showFilters ? 'bg-orange-50 border-orange-500 text-orange-600' : 'border-gray-300 hover:bg-gray-50'
-              }`}
-            >
+                showFilters ? 'bg-orange-50 border-orange-500 text-orange-600' : 'border-gray-300 hover:bg-gray-50'}`}>
               <Filter className="w-5 h-5" />
               Filters
               <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
@@ -810,8 +391,7 @@ const BikeDisplay = () => {
                         ...prev,
                         priceRange: { ...prev.priceRange, min: e.target.value }
                       }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
-                    />
+                      className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"/>
                     <input
                       type="number"
                       placeholder="Max"
@@ -820,8 +400,7 @@ const BikeDisplay = () => {
                         ...prev,
                         priceRange: { ...prev.priceRange, max: e.target.value }
                       }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
-                    />
+                      className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"/>
                   </div>
                 </div>
 
@@ -837,8 +416,7 @@ const BikeDisplay = () => {
                         ...prev,
                         engineRange: { ...prev.engineRange, min: e.target.value }
                       }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
-                    />
+                      className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"/>
                     <input
                       type="number"
                       placeholder="Max"
@@ -847,8 +425,7 @@ const BikeDisplay = () => {
                         ...prev,
                         engineRange: { ...prev.engineRange, max: e.target.value }
                       }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
-                    />
+                      className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"/>
                   </div>
                 </div>
 
@@ -862,8 +439,7 @@ const BikeDisplay = () => {
                           type="checkbox"
                           checked={filters.brands.includes(brand)}
                           onChange={() => handleBrandFilter(brand)}
-                          className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
-                        />
+                          className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"/>
                         <span className="ml-2 text-sm text-gray-700">{brand}</span>
                       </label>
                     ))}
@@ -990,8 +566,7 @@ const BikeDisplay = () => {
           <div className="flex justify-center mb-8">
             <button
               onClick={handleToggleShowMore}
-              className="flex items-center gap-2 bg-gradient-to-r from-[#ffce5a] to-[#eeb61d] hover:bg-gradient-to-r hover:from-[#fac445] hover:to-[#e8b62a] text-white font-semibold py-3 px-6 rounded-full text-lg transition-colors duration-200"
-            >
+              className="flex items-center gap-2 bg-gradient-to-r from-[#ffce5a] to-[#eeb61d] hover:bg-gradient-to-r hover:from-[#fac445] hover:to-[#e8b62a] text-white font-semibold py-3 px-6 rounded-full text-lg transition-colors duration-200">
               {showAllBikes ? (
                 <>
                   <EyeOff className="w-5 h-5" />
@@ -1030,8 +605,7 @@ const BikeDisplay = () => {
         }}
         onSubmit={handleFormSubmit}
         bike={editingBike}
-        isLoading={isSubmitting}
-      />
+        isLoading={isSubmitting}/>
 
       <DeleteConfirmModal
         isOpen={isDeleteModalOpen}
@@ -1041,10 +615,8 @@ const BikeDisplay = () => {
         }}
         onConfirm={handleConfirmDelete}
         bikeName={deletingBike?.name}
-        isLoading={isSubmitting}
-      />
+        isLoading={isSubmitting}/>
 
-      
       <ShowOffer 
         isOpen={isModalOpen}
         onClose={closeModal}

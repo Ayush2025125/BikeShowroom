@@ -12,6 +12,27 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
     }
   }, [isOpen, bikeData]);
 
+  // Helper function to get color value for display
+  const getColorValue = (colorName) => {
+    const color = colorName.toLowerCase();
+    if (color.includes("black") || color.includes("dark")) return "#000000";
+    if (color.includes("white") || color.includes("pearl")) return "#ffffff";
+    if (color.includes("red") || color.includes("racing red")) return "#dc2626";
+    if (color.includes("blue")) return "#2563eb";
+    if (color.includes("green")) return "#16a34a";
+    if (color.includes("yellow")) return "#eab308";
+    if (color.includes("orange")) return "#ea580c";
+    if (
+      color.includes("silver") ||
+      color.includes("grey") ||
+      color.includes("gray")
+    )
+      return "#6b7280";
+    if (color.includes("gold")) return "#f59e0b";
+    if (color.includes("purple")) return "#9333ea";
+    return "#6b7280"; // default gray
+  };
+
   // Sample bike data - replace with your actual data
   const defaultBikeData = {
     name: "Yamaha FZ-S V3.0",
@@ -20,16 +41,24 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
       "/api/placeholder/400/300",
       "/api/placeholder/400/300",
     ],
-    price: "₹1,20,000",
-    originalPrice: "₹1,35,000",
+    finalPrice: "₹1,20,000",
+    priceRange: "₹1,35,000",
     discount: "₹15,000 OFF",
-    emi: "₹3,200/month",
-    range: "45-50 km/l",
-    engine: "149cc",
-    maxPower: "12.4 BHP",
-    maxTorque: "13.6 Nm",
-    fuelCapacity: "13L",
-    offers: [
+    emiStartingFrom: "₹3,200/month",
+    specs: {
+      mileage: "45-50 km/l",
+      engine: "149cc",
+      maxPower: "12.4 BHP",
+      maxTorque: "13.6 Nm",
+      fuelTank: "13L",
+    },
+    availableColors: ["Matte Black", "Pearl White", "Racing Red"],
+    emiOptions: [
+      { duration: "12 months", amount: "₹10,500/month" },
+      { duration: "24 months", amount: "₹5,800/month" },
+      { duration: "36 months", amount: "₹3,200/month" },
+    ],
+    specialOffers: [
       "Zero down payment available",
       "Exchange bonus up to ₹10,000",
       "Extended warranty for 2 years",
@@ -59,20 +88,37 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
     const bikeDetails = `Hi, I'm interested in the following bike:
 
 Bike: ${bike.name}
-Price: ${bike.price}
-${bike.originalPrice && bike.originalPrice !== bike.price ? `Original Price: ${bike.originalPrice}` : ''}
-${bike.discount ? `Discount: ${bike.discount}` : ''}
-EMI: ${bike.emi}
+Price: ${bike.finalPrice || bike.price}
+${
+  (bike.priceRange || bike.originalPrice) &&
+  bike.priceRange !== bike.finalPrice &&
+  bike.originalPrice !== bike.price
+    ? `Original Price: ${bike.priceRange || bike.originalPrice}`
+    : ""
+}
+${bike.discount ? `Discount: ${bike.discount}` : ""}
+EMI: ${bike.emiStartingFrom || bike.emi}
 
 Specifications:
-- Engine: ${bike.engine}
-- Mileage: ${bike.range}
-- Max Power: ${bike.maxPower}
-- Max Torque: ${bike.maxTorque}
-- Fuel Capacity: ${bike.fuelCapacity}
+- Engine: ${bike.specs?.engine || bike.engine}
+- Mileage: ${bike.specs?.mileage || bike.range}
+- Max Power: ${bike.specs?.maxPower || bike.maxPower}
+- Max Torque: ${bike.specs?.maxTorque || bike.maxTorque}
+- Fuel Capacity: ${bike.specs?.fuelTank || bike.fuelCapacity}
 
-${bike.offers && bike.offers.length > 0 ? `Special Offers:
-${bike.offers.map(offer => `- ${offer}`).join('\n')}` : ''}
+${
+  bike.availableColors && bike.availableColors.length > 0
+    ? `Available Colors: ${bike.availableColors.join(", ")}`
+    : ""
+}
+
+${
+  (bike.specialOffers || bike.offers) &&
+  (bike.specialOffers || bike.offers).length > 0
+    ? `Special Offers:
+${(bike.specialOffers || bike.offers).map((offer) => `- ${offer}`).join("\n")}`
+    : ""
+}
 
 Please provide more information about availability, test drive options, and any additional offers.`;
 
@@ -80,11 +126,11 @@ Please provide more information about availability, test drive options, and any 
     onClose();
 
     // Navigate to contact page with pre-filled message
-    navigate('/contact', { 
-      state: { 
+    navigate("/contact", {
+      state: {
         prefilledMessage: bikeDetails,
-        bikeName: bike.name 
-      } 
+        bikeName: bike.name,
+      },
     });
   };
 
@@ -92,38 +138,38 @@ Please provide more information about availability, test drive options, and any 
   const handleContactClick = () => {
     // Close the modal first
     onClose();
-    
+
     // Navigate to contact page with bike name for reference
-    navigate('/contact', { 
-      state: { 
-        bikeName: bike.name 
-      } 
+    navigate("/contact", {
+      state: {
+        bikeName: bike.name,
+      },
     });
   };
 
   // Handle escape key press
   useEffect(() => {
     const handleEscape = (event) => {
-      if (event.key === 'Escape' && isOpen) {
+      if (event.key === "Escape" && isOpen) {
         onClose();
       }
     };
 
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
   }, [isOpen, onClose]);
 
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
 
     // Cleanup function to restore scroll when component unmounts
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
@@ -137,18 +183,21 @@ Please provide more information about availability, test drive options, and any 
   if (!isOpen) return null;
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4"
       onClick={handleBackdropClick}
     >
       <div className="bg-white rounded-lg max-w-6xl w-full h-[95vh] sm:h-[90vh] overflow-hidden shadow-2xl flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-800 truncate pr-4">{bike.name}</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800 truncate pr-4">
+            {bike.name}
+          </h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
-            aria-label="Close modal">
+            aria-label="Close modal"
+          >
             <X size={20} />
           </button>
         </div>
@@ -164,7 +213,7 @@ Please provide more information about availability, test drive options, and any 
                   src={bike.images[currentImageIndex]}
                   alt={`${bike.name} - Image ${currentImageIndex + 1}`}
                   className="w-full h-full max-w-full max-h-full object-contain rounded-lg"
-                  style={{ maxHeight: '400px', maxWidth: '100%' }}
+                  style={{ maxHeight: "400px", maxWidth: "100%" }}
                   onError={(e) => {
                     e.target.src = "/api/placeholder/400/300";
                   }}
@@ -204,22 +253,24 @@ Please provide more information about availability, test drive options, and any 
             </div>
 
             {/* Dot Indicators (hidden when thumbnails are shown) */}
-            {bike.images && bike.images.length > 1 && bike.images.length <= 5 && (
-              <div className="absolute bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 lg:hidden">
-                {bike.images.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentImageIndex(index)}
-                    className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all ${
-                      index === currentImageIndex
-                        ? "bg-orange-500"
-                        : "bg-white bg-opacity-50"
-                    }`}
-                    aria-label={`Go to image ${index + 1}`}
-                  />
-                ))}
-              </div>
-            )}
+            {bike.images &&
+              bike.images.length > 1 &&
+              bike.images.length <= 5 && (
+                <div className="absolute bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 lg:hidden">
+                  {bike.images.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentImageIndex(index)}
+                      className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all ${
+                        index === currentImageIndex
+                          ? "bg-orange-500"
+                          : "bg-white bg-opacity-50"
+                      }`}
+                      aria-label={`Go to image ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
           </div>
 
           {/* Details & Offers Section - Shows second on mobile, left side on desktop */}
@@ -228,14 +279,45 @@ Please provide more information about availability, test drive options, and any 
             <div className="mb-6">
               <div className="flex items-center gap-3 mb-2 flex-wrap">
                 <span className="text-2xl sm:text-3xl font-bold text-green-600">
-                  {bike.price}
+                  {bike.finalPrice || bike.price}
                 </span>
-                {bike.originalPrice && bike.originalPrice !== bike.price && (
-                  <span className="text-base sm:text-lg text-gray-500 line-through">
-                    {bike.originalPrice}
-                  </span>
-                )}
+                {(bike.priceRange || bike.originalPrice) &&
+                  bike.priceRange !== bike.finalPrice &&
+                  bike.originalPrice !== bike.price && (
+                    <span className="text-base sm:text-lg text-gray-500 line-through">
+                      {bike.priceRange || bike.originalPrice}
+                    </span>
+                  )}
               </div>
+
+              {/* Available Colors Display */}
+              {bike.availableColors && bike.availableColors.length > 0 && (
+                <div className="flex items-center gap-3 mb-3 flex-wrap">
+                  <span className="text-sm font-medium text-gray-700">
+                    Colors:
+                  </span>
+                  <div className="flex gap-2 flex-wrap">
+                    {bike.availableColors.map((color, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-1"
+                        title={color}
+                      >
+                        <div
+                          className="w-5 h-5 rounded-full border-2 border-gray-300 shadow-sm"
+                          style={{
+                            backgroundColor: getColorValue(color),
+                          }}
+                        />
+                        <span className="text-xs text-gray-600 hidden sm:inline">
+                          {color}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {bike.discount && (
                 <div className="inline-block bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-semibold mb-3">
                   {bike.discount}
@@ -243,7 +325,9 @@ Please provide more information about availability, test drive options, and any 
               )}
               <p className="text-gray-600 text-sm sm:text-base">
                 EMI starting from{" "}
-                <span className="font-semibold text-orange-600">{bike.emi}</span>
+                <span className="font-semibold text-orange-600">
+                  {bike.emiStartingFrom || bike.emi}
+                </span>
               </p>
             </div>
 
@@ -255,19 +339,27 @@ Please provide more information about availability, test drive options, and any 
               <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <p className="text-xs sm:text-sm text-gray-600">Engine</p>
-                  <p className="font-semibold text-sm sm:text-base">{bike.engine}</p>
+                  <p className="font-semibold text-sm sm:text-base">
+                    {bike.specs?.engine || bike.engine}
+                  </p>
                 </div>
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <p className="text-xs sm:text-sm text-gray-600">Mileage</p>
-                  <p className="font-semibold text-sm sm:text-base">{bike.range}</p>
+                  <p className="font-semibold text-sm sm:text-base">
+                    {bike.specs?.mileage || bike.range}
+                  </p>
                 </div>
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <p className="text-xs sm:text-sm text-gray-600">Max Power</p>
-                  <p className="font-semibold text-sm sm:text-base">{bike.maxPower}</p>
+                  <p className="font-semibold text-sm sm:text-base">
+                    {bike.specs?.maxPower || bike.maxPower}
+                  </p>
                 </div>
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <p className="text-xs sm:text-sm text-gray-600">Fuel Tank</p>
-                  <p className="font-semibold text-sm sm:text-base">{bike.fuelCapacity}</p>
+                  <p className="font-semibold text-sm sm:text-base">
+                    {bike.specs?.fuelTank || bike.fuelCapacity}
+                  </p>
                 </div>
               </div>
             </div>
@@ -278,18 +370,23 @@ Please provide more information about availability, test drive options, and any 
                 Special Offers
               </h3>
               <div className="space-y-2">
-                {bike.offers && bike.offers.length > 0 ? (
-                  bike.offers.map((offer, index) => (
+                {(bike.specialOffers || bike.offers) &&
+                (bike.specialOffers || bike.offers).length > 0 ? (
+                  (bike.specialOffers || bike.offers).map((offer, index) => (
                     <div
                       key={index}
                       className="flex items-center p-3 bg-orange-50 rounded-lg"
                     >
                       <div className="w-2 h-2 bg-orange-500 rounded-full mr-3 flex-shrink-0"></div>
-                      <p className="text-xs sm:text-sm text-gray-700">{offer}</p>
+                      <p className="text-xs sm:text-sm text-gray-700">
+                        {offer}
+                      </p>
                     </div>
                   ))
                 ) : (
-                  <p className="text-xs sm:text-sm text-gray-500">No special offers available</p>
+                  <p className="text-xs sm:text-sm text-gray-500">
+                    No special offers available
+                  </p>
                 )}
               </div>
             </div>
@@ -300,22 +397,44 @@ Please provide more information about availability, test drive options, and any 
                 EMI Options
               </h3>
               <div className="space-y-2">
-                <div className="flex justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="text-xs sm:text-sm">12 months</span>
-                  <span className="font-semibold text-sm sm:text-base">₹10,500/month</span>
-                </div>
-                <div className="flex justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="text-xs sm:text-sm">24 months</span>
-                  <span className="font-semibold text-sm sm:text-base">₹5,800/month</span>
-                </div>
-                <div className="flex justify-between p-3 bg-orange-50 rounded-lg border border-orange-200">
-                  <span className="text-xs sm:text-sm text-orange-700">
-                    36 months (Popular)
-                  </span>
-                  <span className="font-semibold text-sm sm:text-base text-orange-700">
-                    ₹3,200/month
-                  </span>
-                </div>
+                {bike.emiOptions && bike.emiOptions.length > 0 ? (
+                  bike.emiOptions.map((option, index) => (
+                    <div
+                      key={index}
+                      className={`flex justify-between p-3 rounded-lg ${
+                        option.duration?.toLowerCase().includes("popular") ||
+                        option.duration?.includes("36")
+                          ? "bg-orange-50 border border-orange-200"
+                          : "bg-gray-50"
+                      }`}
+                    >
+                      <span
+                        className={`text-xs sm:text-sm ${
+                          option.duration?.toLowerCase().includes("popular") ||
+                          option.duration?.includes("36")
+                            ? "text-orange-700"
+                            : ""
+                        }`}
+                      >
+                        {option.duration}
+                      </span>
+                      <span
+                        className={`font-semibold text-sm sm:text-base ${
+                          option.duration?.toLowerCase().includes("popular") ||
+                          option.duration?.includes("36")
+                            ? "text-orange-700"
+                            : ""
+                        }`}
+                      >
+                        {option.amount}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-xs sm:text-sm text-gray-500">
+                    No EMI options available
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -323,15 +442,17 @@ Please provide more information about availability, test drive options, and any 
 
         {/* Bottom Action Buttons - Fixed positioning */}
         <div className="flex gap-4 p-4 sm:p-6 border-t border-gray-200 bg-gray-50 flex-shrink-0">
-          <button 
+          <button
             onClick={handleContactClick}
-            className="flex-1 bg-white border-2 border-orange-500 text-orange-500 py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-orange-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
+            className="flex-1 bg-white border-2 border-orange-500 text-orange-500 py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-orange-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+          >
             <Phone size={16} className="sm:w-[18px] sm:h-[18px]" />
             Contact Us
           </button>
-          <button 
+          <button
             onClick={handleInterestedClick}
-            className="flex-1 bg-orange-500 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
+            className="flex-1 bg-orange-500 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+          >
             <Heart size={16} className="sm:w-[18px] sm:h-[18px]" />
             Interested
           </button>

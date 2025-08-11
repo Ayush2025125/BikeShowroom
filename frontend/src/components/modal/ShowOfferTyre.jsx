@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { X, ChevronLeft, ChevronRight, Phone, Heart } from "lucide-react";
-import { useNavigate } from "react-router-dom"; // Add this import
+import { X, ChevronLeft, ChevronRight, Phone, Heart, Star, Shield, Zap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const ShowOfferTyre = ({ isOpen, onClose, tyreData }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const navigate = useNavigate(); // Add this hook
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isOpen && tyreData) {
@@ -40,6 +40,8 @@ const ShowOfferTyre = ({ isOpen, onClose, tyreData }) => {
     offers = [],
     features = []
   } = tyreData;
+
+  console.log(tyreData);
 
   const tyreImages = safeArray(images);
   const tyreOffers = safeArray(offers);
@@ -89,7 +91,6 @@ Please provide more information about availability, installation services, and a
     // Close the modal first
     onClose();
 
-    // Navigate to contact page with pre-filled message
     navigate('/contact', { 
       state: { 
         prefilledMessage: tyreDetails,
@@ -97,20 +98,22 @@ Please provide more information about availability, installation services, and a
         productType: 'tyre'
       } 
     });
+    
+    console.log('Navigate to contact with:', tyreDetails);
   };
 
   // Handle contact us button click
   const handleContactClick = () => {
     // Close the modal first
     onClose();
-    
-    // Navigate to contact page with tyre name for reference
     navigate('/contact', { 
       state: { 
         tyreName: `${brand} ${model}`,
         productType: 'tyre'
       } 
     });
+    
+    console.log('Navigate to contact page');
   };
 
   // Handle escape key press
@@ -278,37 +281,50 @@ Please provide more information about availability, installation services, and a
                   <p className="text-xs sm:text-sm text-gray-600">Max Speed</p>
                   <p className="font-semibold text-sm sm:text-base">{maxSpeed}</p>
                 </div>
-                {compound && (
-                  <div className="bg-gray-50 p-3 rounded-lg">
+                <div className="bg-gray-50 p-3 rounded-lg">
                     <p className="text-xs sm:text-sm text-gray-600">Compound</p>
                     <p className="font-semibold text-sm sm:text-base">{compound}</p>
                   </div>
-                )}
-                {maxLoad && (
                   <div className="bg-gray-50 p-3 rounded-lg">
                     <p className="text-xs sm:text-sm text-gray-600">Max Load</p>
                     <p className="font-semibold text-sm sm:text-base">{maxLoad}</p>
                   </div>
-                )}
               </div>
             </div>
 
-            {/* Key Features */}
+            {/* Enhanced Key Features Display Section */}
             {tyreFeatures.length > 0 && (
               <div className="mb-6">
-                <h3 className="text-base sm:text-lg font-semibold mb-3 text-gray-800">
-                  Key Features
-                </h3>
-                <div className="space-y-2">
+                <div className="flex items-center gap-2 mb-4">
+                  <Star className="w-5 h-5 text-orange-600" />
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-800">
+                    Key Features
+                  </h3>
+                </div>
+                <div className="space-y-3">
                   {tyreFeatures.map((feature, index) => (
                     <div
                       key={index}
-                      className="flex items-center p-3 bg-green-50 rounded-lg"
+                      className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg border border-orange-100 hover:border-orange-200 transition-colors"
                     >
-                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
-                      <p className="text-xs sm:text-sm text-gray-700">{feature}</p>
+                      <div className="flex-shrink-0 w-7 h-7 bg-orange-100 rounded-full flex items-center justify-center mt-0.5">
+                        {index % 3 === 0 && <Shield className="w-3.5 h-3.5 text-orange-600" />}
+                        {index % 3 === 1 && <Zap className="w-3.5 h-3.5 text-orange-600" />}
+                        {index % 3 === 2 && <Star className="w-3.5 h-3.5 text-orange-600" />}
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-xs sm:text-sm font-medium text-gray-800 leading-relaxed">
+                          {feature}
+                        </p>
+                      </div>
                     </div>
                   ))}
+                </div>
+                {/* Feature Count Badge */}
+                <div className="mt-4 flex justify-center">
+                  <span className="bg-orange-100 text-orange-800 text-xs font-semibold px-3 py-1 rounded-full">
+                    {tyreFeatures.length} {tyreFeatures.length === 1 ? 'Feature' : 'Features'}
+                  </span>
                 </div>
               </div>
             )}
