@@ -2,17 +2,21 @@ import LandingPage from "./pages/LandingPage";
 import AboutUs from "./pages/AboutUs";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Bikes from "./pages/Bikes";
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import Tyre from "./pages/Tyre";
 import LoginPage from "./pages/LoginPage";
 import ContactUs from "./pages/ContactUs";
 import { AuthProvider } from "./context/AuthContext";
+import ContactModal from "./components/modal/ContactModal";
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        {/* Modal lives here, always available */}
+        <ContactModal />
+
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/about" element={<AboutUs />} />
