@@ -320,12 +320,6 @@ Please provide more information about availability, installation services, and a
                     </div>
                   ))}
                 </div>
-                {/* Feature Count Badge */}
-                <div className="mt-4 flex justify-center">
-                  <span className="bg-orange-100 text-orange-800 text-xs font-semibold px-3 py-1 rounded-full">
-                    {tyreFeatures.length} {tyreFeatures.length === 1 ? 'Feature' : 'Features'}
-                  </span>
-                </div>
               </div>
             )}
 

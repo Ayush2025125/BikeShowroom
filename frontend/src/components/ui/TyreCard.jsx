@@ -10,7 +10,6 @@ const TyreCard = ({ name, price, image }) => {
       />
       <div className="absolute bottom-0 w-full bg-black/60 text-white p-4">
         <h3 className="text-xl font-bold">{name}</h3>
-        <p className="text-sm">{price}</p>
       </div>
     </div>
   );

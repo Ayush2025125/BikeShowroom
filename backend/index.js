@@ -11,6 +11,7 @@ const newsletterRoutes = require('./routes/newsletterRoutes');
 const bikeRoutes = require("./routes/bikeRoutes");
 const tyreRoutes = require("./routes/tyreRoutes.js");
 const offerRoutes = require("./routes/offerRoutes.js");
+const carousalRoutes = require("./routes/carousalRoutes.js");
 
 dotenv.config();
 const app = express();
@@ -25,6 +26,7 @@ app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/bikes', bikeRoutes);
 app.use('/api/tyres',tyreRoutes);
 app.use('/api/offers',offerRoutes);
+app.use('/api/carousal',carousalRoutes);
 
 // DB Connection
 mongoose.connect(process.env.MONGO_URI).then(() => {

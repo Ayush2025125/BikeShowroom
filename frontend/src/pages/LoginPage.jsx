@@ -307,15 +307,6 @@ const LoginPage = () => {
               </div>
             </div>
           </div>
-
-          {/* Footer */}
-          <div className="text-center mt-8">
-            <div className="inline-flex items-center space-x-2 text-xs font-medium text-gray-400">
-              <Shield className="w-4 h-4" />
-              <span className="uppercase tracking-wider">Enterprise-Grade Security</span>
-              <Shield className="w-4 h-4" />
-            </div>
-          </div>
         </div>
       </div>
     </div>

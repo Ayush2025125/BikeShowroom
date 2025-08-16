@@ -414,7 +414,7 @@ const TyreDisplay = () => {
           {/* Section Title with Admin Controls */}
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-bold text-gray-900">
-              OUR TOP SELLING TYRES
+              OUR WIDE COLLECTION
             </h2>
 
             {/* Admin Status and Controls */}
