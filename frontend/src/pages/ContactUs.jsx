@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
-import { useLocation } from 'react-router-dom'; // Add this import
+import { useLocation } from 'react-router-dom'; 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 const ContactUs = () => {
-  const location = useLocation(); // Add this hook
+  const location = useLocation(); 
   
   const [form, setForm] = useState({
     name: '',

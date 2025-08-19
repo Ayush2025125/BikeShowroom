@@ -13,6 +13,10 @@ const tyreRoutes = require("./routes/tyreRoutes.js");
 const offerRoutes = require("./routes/offerRoutes.js");
 const carousalRoutes = require("./routes/carousalRoutes.js");
 
+//export route
+const exportRoutes = require('./routes/exportRoute');
+
+
 dotenv.config();
 const app = express();
 
@@ -27,6 +31,7 @@ app.use('/api/bikes', bikeRoutes);
 app.use('/api/tyres',tyreRoutes);
 app.use('/api/offers',offerRoutes);
 app.use('/api/carousal',carousalRoutes);
+app.use('/api', exportRoutes);
 
 // DB Connection
 mongoose.connect(process.env.MONGO_URI).then(() => {

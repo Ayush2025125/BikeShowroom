@@ -69,7 +69,7 @@ export default function Header() {
         </div>
 
         {/* Main Header */}
-        <div className="bg-black text-white px-4 py-4">
+        <div className="bg-black text-white px-4 py-8">
           {/* Mobile Layout */}
           <div className="sm:hidden flex justify-between items-center">
             {/* Mobile Menu Button */}
@@ -94,8 +94,7 @@ export default function Header() {
                 </span>
                 <button
                   onClick={handleLogout}
-                  className="bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1 rounded transition"
-                >
+                  className="bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1 rounded transition">
                   Logout
                 </button>
               </div>

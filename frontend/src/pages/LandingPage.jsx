@@ -9,6 +9,7 @@ import TestimonialsSection from "../components/TestimonialSection";
 import Banner from "../components/Banner";
 import ContactUs from "../components/ui/ContactUs";
 import BikeHover from "../components/BikeHover";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -91,6 +92,7 @@ function LandingPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
+  const navigate = useNavigate();
 
   // Detect mobile device
   useEffect(() => {
@@ -149,7 +151,8 @@ function LandingPage() {
         />
 
         <section className="bg-square-grid px-4 sm:px-6 lg:px-10">
-          <div className="container mx-auto">
+          <div onClick={() => navigate("/bikes")}
+          className="container mx-auto">
             {isLoading ? <LoadingSkeleton /> : <BikeList />}
           </div>
         </section>
@@ -163,7 +166,8 @@ function LandingPage() {
         />
 
         <section className="bg-square-grid py-1 px-4 sm:px-6 lg:px-10">
-          <div className="container mx-auto">
+          <div onClick={() => navigate("/tyres")}
+          className="container mx-auto">
             {isLoading ? <LoadingSkeleton /> : <TyreList />}
           </div>
         </section>

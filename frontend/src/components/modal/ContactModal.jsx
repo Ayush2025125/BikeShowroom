@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { X, Mail, User, MessageCircle, Send, Phone } from "lucide-react";
+import { X, Mail, User, MessageCircle, Send, Phone, CheckCircle, AlertCircle } from "lucide-react";
 
 export default function ContactModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,12 +11,13 @@ export default function ContactModal() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
-
+  const [status, setStatus] = useState('');
+  const [submitType, setSubmitType] = useState('');
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsOpen(true);
-    }, 7000);
+    }, 5000); 
 
     return () => clearTimeout(timer);
   }, []);
@@ -35,6 +36,11 @@ export default function ContactModal() {
         [name]: ""
       }));
     }
+    // Clear status when user makes changes
+    if (status) {
+      setStatus('');
+      setSubmitType('');
+    }
   };
 
   // Validate form
@@ -43,6 +49,8 @@ export default function ContactModal() {
     
     if (!formData.name.trim()) {
       newErrors.name = "Name is required";
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = "Name must be at least 2 characters";
     }
     
     if (!formData.email.trim()) {
@@ -51,8 +59,16 @@ export default function ContactModal() {
       newErrors.email = "Please enter a valid email";
     }
     
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Phone number is required";
+    } else if (!/^[\+]?[1-9]?[0-9]{7,15}$/.test(formData.phone.replace(/[\s\-\(\)]/g, ''))) {
+      newErrors.phone = "Please enter a valid phone number";
+    }
+    
     if (!formData.message.trim()) {
       newErrors.message = "Message is required";
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = "Message must be at least 10 characters";
     }
 
     setErrors(newErrors);
@@ -63,24 +79,62 @@ export default function ContactModal() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!validateForm()) return;
-    
+    if (!validateForm()) {
+      return;
+    }
+
     setIsSubmitting(true);
-    
+    setStatus('');
+
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // API endpoint for contact form
+      const API_URL = 'http://localhost:5000';
       
-      // Reset form and close modal on success
-      setFormData({ name: "", email: "", phone: "", message: "" });
-      setIsOpen(false);
+      const response = await fetch(`${API_URL}/api/contact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+        // Add timeout using AbortController
+        signal: AbortSignal.timeout(10000)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || `HTTP error! status: ${response.status}`);
+      }
+
+      setStatus(data.message || 'Message sent successfully! We\'ll get back to you soon.');
+      setSubmitType('success');
+      setFormData({ name: '', email: '', phone: '', message: '' });
+      setErrors({});
       
-      // You could show a success message here
-      alert("Thank you! We'll get back to you soon.");
+      // Auto-close modal after success
+      setTimeout(() => {
+        handleClose();
+      }, 3000);
+
+    } catch (err) {
+      console.error('Contact form error:', err);
       
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("Something went wrong. Please try again.");
+      let errorMessage = 'Something went wrong. Please try again or contact us directly.';
+      
+      if (err.name === 'AbortError') {
+        errorMessage = 'Request timeout. Please check your connection and try again.';
+      } else if (err.message.includes('429')) {
+        errorMessage = 'Too many requests. Please try again in a few minutes.';
+      } else if (err.message.includes('400')) {
+        errorMessage = 'Please check your information and try again.';
+      } else if (err.message.includes('500')) {
+        errorMessage = 'Server error. Please try again later or contact us directly.';
+      } else if (err.message.includes('Failed to fetch')) {
+        errorMessage = 'Network error. Please check your connection and try again.';
+      }
+      
+      setStatus(errorMessage);
+      setSubmitType('error');
     } finally {
       setIsSubmitting(false);
     }
@@ -91,17 +145,18 @@ export default function ContactModal() {
     setIsOpen(false);
     setFormData({ name: "", email: "", phone: "", message: "" });
     setErrors({});
+    setStatus('');
+    setSubmitType('');
   };
 
   if (!isOpen) return null;
 
   return (
     <>
-     
       {/* Modal Overlay */}
       <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50 p-3 sm:p-4">
         {/* Modal Box - Optimized for mobile and desktop */}
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md mx-auto relative transform transition-all duration-300 animate-in slide-in-from-bottom-4 fade-in-0 max-h-[95vh] sm:max-h-[90vh] overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md mx-auto relative transform transition-all duration-300 max-h-[95vh] sm:max-h-[90vh] overflow-hidden">
           
           {/* Compact Header */}
           <div className="bg-gradient-to-r from-orange-600 to-black p-4 sm:p-5 text-white relative overflow-hidden">
@@ -121,7 +176,7 @@ export default function ContactModal() {
                 {/* Close Button */}
                 <button
                   onClick={handleClose}
-                  className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors touch-manipulation"
+                  className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
                   aria-label="Close modal"
                 >
                   <X className="w-4 h-4 text-white" />
@@ -137,6 +192,22 @@ export default function ContactModal() {
           {/* Scrollable Form Content */}
           <div className="p-4 sm:p-5 max-h-[calc(95vh-120px)] sm:max-h-[calc(90vh-140px)] overflow-y-auto">
             <div className="space-y-4">
+              
+              {/* Status Message */}
+              {status && (
+                <div className={`p-3 rounded-lg text-sm flex items-center gap-2 ${
+                  submitType === 'success' 
+                    ? 'bg-green-50 text-green-800 border border-green-200' 
+                    : 'bg-red-50 text-red-800 border border-red-200'
+                }`}>
+                  {submitType === 'success' ? (
+                    <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
+                  ) : (
+                    <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+                  )}
+                  <span>{status}</span>
+                </div>
+              )}
               
               {/* Name Field */}
               <div className="space-y-1">
@@ -154,8 +225,9 @@ export default function ContactModal() {
                     onChange={handleChange}
                     className={`block w-full pl-10 pr-3 py-2.5 sm:py-3 border ${
                       errors.name ? 'border-red-300' : 'border-gray-300'
-                    } rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base`}
+                    } rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base`}
                     placeholder="Enter your full name"
+                    disabled={isSubmitting}
                   />
                 </div>
                 {errors.name && (
@@ -179,8 +251,9 @@ export default function ContactModal() {
                     onChange={handleChange}
                     className={`block w-full pl-10 pr-3 py-2.5 sm:py-3 border ${
                       errors.email ? 'border-red-300' : 'border-gray-300'
-                    } rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base`}
+                    } rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base`}
                     placeholder="your@email.com"
+                    disabled={isSubmitting}
                   />
                 </div>
                 {errors.email && (
@@ -191,7 +264,7 @@ export default function ContactModal() {
               {/* Phone Field */}
               <div className="space-y-1">
                 <label className="block text-sm font-medium text-gray-700">
-                  Phone Number
+                  Phone Number *
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -202,10 +275,16 @@ export default function ContactModal() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-2.5 sm:py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
-                    placeholder="+1 (555) 123-4567"
+                    className={`block w-full pl-10 pr-3 py-2.5 sm:py-3 border ${
+                      errors.phone ? 'border-red-300' : 'border-gray-300'
+                    } rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base`}
+                    placeholder="+91 98765 43210"
+                    disabled={isSubmitting}
                   />
                 </div>
+                {errors.phone && (
+                  <p className="text-red-500 text-xs">{errors.phone}</p>
+                )}
               </div>
 
               {/* Message Field */}
@@ -224,8 +303,9 @@ export default function ContactModal() {
                     onChange={handleChange}
                     className={`block w-full pl-10 pr-3 py-2.5 sm:py-3 border ${
                       errors.message ? 'border-red-300' : 'border-gray-300'
-                    } rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none text-sm sm:text-base`}
+                    } rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 resize-none text-sm sm:text-base`}
                     placeholder="Tell us about your inquiry..."
+                    disabled={isSubmitting}
                   />
                 </div>
                 {errors.message && (
@@ -235,13 +315,14 @@ export default function ContactModal() {
 
               {/* Submit Button */}
               <button
-                type="submit"
+                type="button"
+                onClick={handleSubmit}
                 disabled={isSubmitting}
-                className={`w-full flex items-center justify-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm sm:text-base font-medium text-white transition-all duration-200 touch-manipulation ${
+                className={`w-full flex items-center justify-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm sm:text-base font-medium text-white transition-all duration-200 ${
                   isSubmitting
                     ? 'bg-gray-400 cursor-not-allowed'
                     : 'bg-gradient-to-r from-orange-600 to-black hover:from-orange-700 hover:to-black transform hover:scale-[1.02] active:scale-[0.98]'
-                } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+                } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500`}
               >
                 {isSubmitting ? (
                   <>
