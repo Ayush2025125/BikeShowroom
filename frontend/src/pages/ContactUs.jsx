@@ -1,9 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle, AlertCircle, Download, Loader2 } from 'lucide-react';
 import { useLocation } from 'react-router-dom'; 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+
+const useLocalStorage = (key, defaultValue = null) => {
+  const [value, setValue] = useState(defaultValue);
+
+  useEffect(() => {
+    try {
+      const item = localStorage.getItem(key);
+      setValue(item ?? defaultValue);
+    } catch (error) {
+      console.log("localStorage not available");
+    }
+  }, [key]);
+
+  return value;
+};
 
 const ContactUs = () => {
   const location = useLocation(); 
@@ -17,7 +32,33 @@ const ContactUs = () => {
 
   const [status, setStatus] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitType, setSubmitType] = useState(''); 
+  const [submitType, setSubmitType] = useState('');
+
+  // Admin CSV download states
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadSuccess, setDownloadSuccess] = useState(false);
+  const adminToken = useLocalStorage("adminToken");
+  const isAdmin = !!adminToken;
+
+
+  // Check if user is admin on component mount
+  useEffect(() => {
+    const checkAdminStatus = () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          // Decode JWT token to check role
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          setIsAdmin(payload.role === 'admin');
+        }
+      } catch (error) {
+        console.error('Error checking admin status:', error);
+        setIsAdmin(false);
+      }
+    };
+
+    checkAdminStatus();
+  }, []);
 
   // Effect to handle pre-filled message from navigation state
   useEffect(() => {
@@ -48,6 +89,47 @@ const ContactUs = () => {
       setSubmitType('error');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Handle CSV download
+  const handleDownloadCSV = async () => {
+    setIsDownloading(true);
+    setDownloadSuccess(false);
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:5000/api/export-contacts', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: 'blob', // Important for file downloads
+      });
+
+      // Create blob link to download
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // Generate filename with current date
+      const currentDate = new Date().toISOString().split('T')[0];
+      link.setAttribute('download', `customer-queries-${currentDate}.csv`);
+      
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      // Show success message
+      setDownloadSuccess(true);
+      setTimeout(() => setDownloadSuccess(false), 3000); // Hide after 3 seconds
+
+    } catch (error) {
+      console.error('Error downloading CSV:', error);
+      // You could add error handling here similar to the form submission
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -104,6 +186,39 @@ const ContactUs = () => {
                     </span>
                   )}
                 </p>
+              </div>
+            )}
+
+            {/* Admin CSV Download Button */}
+            {isAdmin && (
+              <div className="mt-8">
+                <button
+                  onClick={handleDownloadCSV}
+                  disabled={isDownloading}
+                  className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:transform-none mx-auto"
+                >
+                  {isDownloading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Downloading...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-5 h-5" />
+                      Download Customer Queries (CSV)
+                    </>
+                  )}
+                </button>
+
+                {/* Success Message */}
+                {downloadSuccess && (
+                  <div className="mt-4 inline-flex items-center gap-2 bg-green-500 bg-opacity-20 border border-green-400 rounded-lg px-4 py-2">
+                    <CheckCircle className="w-5 h-5 text-green-300" />
+                    <p className="text-green-200 text-sm font-medium">
+                      CSV downloaded successfully!
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </div>
