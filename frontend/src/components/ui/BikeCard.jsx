@@ -4,7 +4,7 @@ const BikeCard = ({ name, price, image }) => {
   return (
     <div className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition duration-300">
       <img
-        src={`/images/bikes/${image[0]}`}
+        src={ image[0]||`/images/bikes/${image[0]}`}
         alt={name}
         className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
       />

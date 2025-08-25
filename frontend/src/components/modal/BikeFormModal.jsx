@@ -143,7 +143,7 @@ const BikeFormModal = ({ isOpen, onClose, onSubmit, bike = null, isLoading }) =>
     setImagePreviewUrls(prev => prev.filter((_, i) => i !== index));
   };
 
-  // Upload images to Cloudinary (only called on submit)
+  // Upload images to Cloudinary 
   const uploadImagesToCloudinary = async (files) => {
     const uploadPromises = files.map(async (file) => {
       const formDataUpload = new FormData();

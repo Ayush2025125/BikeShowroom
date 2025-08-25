@@ -169,31 +169,43 @@ const BikeDisplay = () => {
     setIsDeleteModalOpen(true);
   };
 
-  const handleFormSubmit = async (formData) => {
-    setIsSubmitting(true);
-    try {
-      let response;
-      if (editingBike) {
-        // Update existing bike
-        response = await apiCall('PUT', `/api/bikes/${editingBike._id}`, formData);
-        setBikes(prev => prev.map(bike => 
-          bike._id === editingBike._id ? response.data : bike
-        ));
-      } else {
-        // Add new bike
-        response = await apiCall('POST', '/api/bikes', formData);
-        setBikes(prev => [...prev, response.data]);
+ const handleFormSubmit = async (formData) => {
+  setIsSubmitting(true);
+
+  try {
+    // Normalize the image field
+    if (formData.image) {
+      if (typeof formData.image === 'string') {
+        formData.image = [formData.image]; // convert to array
+      } else if (!Array.isArray(formData.image)) {
+        formData.image = [];
       }
-      
-      setIsFormModalOpen(false);
-      setEditingBike(null);
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      setError('Failed to save bike. Please try again.');
-    } finally {
-      setIsSubmitting(false);
+    } else {
+      formData.image = [];
     }
-  };
+
+    let response;
+    if (editingBike) {
+      // Update existing bike
+      response = await apiCall('PUT', `/api/bikes/${editingBike._id}`, formData);
+      setBikes(prev => prev.map(bike =>
+        bike._id === editingBike._id ? response.data : bike
+      ));
+    } else {
+      // Add new bike
+      response = await apiCall('POST', '/api/bikes', formData);
+      setBikes(prev => [...prev, response.data]);
+    }
+
+    setIsFormModalOpen(false);
+    setEditingBike(null);
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    setError('Failed to save bike. Please try again.');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleConfirmDelete = async () => {
     setIsSubmitting(true);
@@ -210,23 +222,21 @@ const BikeDisplay = () => {
     }
   };
 
- const handleCheckOffers = (bike) => {
-  // Handle different image data structures
+const handleCheckOffers = (bike) => {
   let imageArray = [];
-  
+
+  // Normalize image data
   if (bike.image) {
     if (Array.isArray(bike.image)) {
-      // If image is already an array, map each image to full path
-      imageArray = bike.image.map(img => `/images/bikes/${img}`);
-    } else if (typeof bike.image === 'string') {
-      // If image is a single string, create array with that image
-      imageArray = [`/images/bikes/${bike.image}`];
+      imageArray = bike.image.filter((img) => typeof img === "string" && img.trim() !== "");
+    } else if (typeof bike.image === "string" && bike.image.trim() !== "") {
+      imageArray = [bike.image];
     }
   }
-  
-  // If no images or empty array, use placeholder
+
+  // Fallback to placeholder if no valid image
   if (imageArray.length === 0) {
-    imageArray = ["/images/placeholder.jpg"];
+    imageArray = ["https://res.cloudinary.com/your-cloud-name/image/upload/v1234567890/placeholder.jpg"];
   }
 
   const modalBikeData = {
@@ -254,10 +264,11 @@ const BikeDisplay = () => {
       { tenure: "36 months", amount: "₹3,200/month", popular: true }
     ]
   };
-  
+
   setSelectedBike(modalBikeData);
   setIsModalOpen(true);
 };
+
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedBike(null);

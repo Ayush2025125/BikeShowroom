@@ -33,9 +33,9 @@ const ShowOffer = ({ isOpen, onClose, bikeData }) => {
     return "#6b7280"; // default gray
   };
 
-  // Sample bike data - replace with your actual data
+  // fall back data
   const defaultBikeData = {
-    name: "Yamaha FZ-S V3.0",
+    name: "NA",
     images: [
       "/api/placeholder/400/300",
       "/api/placeholder/400/300",

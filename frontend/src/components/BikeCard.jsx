@@ -1,12 +1,12 @@
 import React from 'react';
-import { Search, Filter, X, ChevronDown, Loader2, Edit, Trash2, Plus, Save, AlertTriangle, Eye, EyeOff } from 'lucide-react';
+import {  Edit, Trash2 } from 'lucide-react';
 
 const BikeCard = ({ bike, onCheckOffers, onEdit, onDelete, isAdmin }) => {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       <div className="relative h-48 bg-gradient-to-br from-orange-100 to-orange-100 flex items-center justify-center">
         <img 
-          src={`/images/bikes/${bike.image[0]}`}
+          src={bike.image?.[0] || `/images/bikes/${bike.image[0]}`}
           alt={bike.name || "Bike Image"}
           className="w-full h-full object-cover"
           onError={(e) => {
