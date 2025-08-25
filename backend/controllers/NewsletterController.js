@@ -1,4 +1,5 @@
 const Newsletter = require('../models/Newsletter');
+const {sendConfirmationEmail} = require('../utils/email');
 
 exports.subscribe = async (req, res) => {
   const { email } = req.body;
@@ -15,6 +16,7 @@ exports.subscribe = async (req, res) => {
 
     const newSub = new Newsletter({ email });
     await newSub.save();
+    sendConfirmationEmail(email);
 
     return res.status(201).json({ message: 'Subscribed successfully.' });
   } catch (err) {

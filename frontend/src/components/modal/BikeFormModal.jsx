@@ -1,5 +1,5 @@
 import React, {useEffect,useState} from 'react';
-import {X, Save, Loader2, Plus, Trash2} from 'lucide-react';
+import {X, Save, Loader2, Plus, Trash2, Upload} from 'lucide-react';
 
 // Bike Form Modal Component
 const BikeFormModal = ({ isOpen, onClose, onSubmit, bike = null, isLoading }) => {
@@ -9,7 +9,7 @@ const BikeFormModal = ({ isOpen, onClose, onSubmit, bike = null, isLoading }) =>
     finalPrice: '',
     discount: '',
     emiStartingFrom: '',
-    image: '',
+    image: [],
     priority: 1,
     specs: {
       engine: '',
@@ -23,17 +23,21 @@ const BikeFormModal = ({ isOpen, onClose, onSubmit, bike = null, isLoading }) =>
     availableColors: ['']
   });
 
+  const [imageFiles, setImageFiles] = useState([]);
+  const [imagePreviewUrls, setImagePreviewUrls] = useState([]);
+  const [uploadingImages, setUploadingImages] = useState(false);
+
   useEffect(() => {
     if (bike) {
-      // Handle different image data structures consistently
-      let imageValue = '';
+      // Handle existing bike data
+      let imageArray = [];
       if (bike.image) {
         if (Array.isArray(bike.image)) {
-          // If it's an array, join them with commas
-          imageValue = bike.image.join(',');
-        } else {
-          // If it's a string, use it directly
-          imageValue = bike.image;
+          imageArray = bike.image;
+        } else if (typeof bike.image === 'string') {
+          imageArray = bike.image.includes(',') 
+            ? bike.image.split(',').map(img => img.trim())
+            : [bike.image];
         }
       }
 
@@ -43,7 +47,7 @@ const BikeFormModal = ({ isOpen, onClose, onSubmit, bike = null, isLoading }) =>
         finalPrice: bike.finalPrice || '',
         discount: bike.discount || '',
         emiStartingFrom: bike.emiStartingFrom || '',
-        image: imageValue,
+        image: imageArray,
         priority: bike.priority || 1,
         specs: {
           engine: bike.specs?.engine || '',
@@ -56,6 +60,9 @@ const BikeFormModal = ({ isOpen, onClose, onSubmit, bike = null, isLoading }) =>
         emiOptions: bike.emiOptions?.length > 0 ? bike.emiOptions : [{ duration: '', amount: '' }],
         availableColors: bike.availableColors?.length > 0 ? bike.availableColors : ['']
       });
+      
+      // Set existing image URLs for preview
+      setImagePreviewUrls(imageArray);
     } else {
       // Reset form for new bike
       setFormData({
@@ -64,7 +71,7 @@ const BikeFormModal = ({ isOpen, onClose, onSubmit, bike = null, isLoading }) =>
         finalPrice: '',
         discount: '',
         emiStartingFrom: '',
-        image: '',
+        image: [],
         priority: 1,
         specs: {
           engine: '',
@@ -77,6 +84,8 @@ const BikeFormModal = ({ isOpen, onClose, onSubmit, bike = null, isLoading }) =>
         emiOptions: [{ duration: '', amount: '' }],
         availableColors: ['']
       });
+      setImageFiles([]);
+      setImagePreviewUrls([]);
     }
   }, [bike, isOpen]);
 
@@ -97,6 +106,71 @@ const BikeFormModal = ({ isOpen, onClose, onSubmit, bike = null, isLoading }) =>
         [name]: value
       }));
     }
+  };
+
+  // Handle image file selection (just for preview, no upload yet)
+  const handleImageSelect = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      setImageFiles(prev => [...prev, ...files]);
+      
+      // Create preview URLs for new files
+      const newPreviewUrls = files.map(file => URL.createObjectURL(file));
+      setImagePreviewUrls(prev => [...prev, ...newPreviewUrls]);
+    }
+  };
+
+  // Remove image from preview and files
+  const removeImage = (index) => {
+    // Check if this is a new file (exists in imageFiles) or existing image
+    const existingImagesCount = formData.image.length;
+    
+    if (index < existingImagesCount) {
+      // Removing an existing image (already uploaded)
+      setFormData(prev => ({
+        ...prev,
+        image: prev.image.filter((_, i) => i !== index)
+      }));
+    } else {
+      // Removing a new file
+      const fileIndex = index - existingImagesCount;
+      if (imageFiles[fileIndex]) {
+        URL.revokeObjectURL(imagePreviewUrls[index]);
+        setImageFiles(prev => prev.filter((_, i) => i !== fileIndex));
+      }
+    }
+    
+    setImagePreviewUrls(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // Upload images to Cloudinary (only called on submit)
+  const uploadImagesToCloudinary = async (files) => {
+    const uploadPromises = files.map(async (file) => {
+      const formDataUpload = new FormData();
+      formDataUpload.append('bikeImage', file);
+
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/upload-bike-image`, 
+          {
+            method: 'POST',
+            body: formDataUpload,
+          }
+        );
+        
+        if (!response.ok) {
+          throw new Error('Upload failed');
+        }
+        
+        const data = await response.json();
+        return data.url; // Return Cloudinary URL
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        throw error;
+      }
+    });
+
+    return Promise.all(uploadPromises);
   };
 
   // Handle Special Offers
@@ -189,28 +263,42 @@ const BikeFormModal = ({ isOpen, onClose, onSubmit, bike = null, isLoading }) =>
     return '#6b7280'; // default gray
   };
 
-  const handleSubmit = () => {
-    
-    // Process the form data before submission
-    const processedFormData = {
-      ...formData,
-      // Handle multiple images: split by comma, trim whitespace, and filter out empty strings
-      image: formData.image
-        ? formData.image.split(',').map(img => img.trim()).filter(img => img.length > 0)
-        : [],
-      // Filter out empty special offers
-      specialOffers: formData.specialOffers.filter(offer => offer.trim().length > 0),
-      // Filter out incomplete EMI options
-      emiOptions: formData.emiOptions.filter(option => 
-        option.duration.trim().length > 0 && option.amount.trim().length > 0
-      ),
-      // Filter out empty colors
-      availableColors: formData.availableColors.filter(color => color.trim().length > 0),
-      // Ensure priority is a number
-      priority: parseInt(formData.priority) || 1
-    };
-    
-    onSubmit(processedFormData);
+  const handleSubmit = async () => {
+    try {
+      setUploadingImages(true);
+      
+      let uploadedImageUrls = [...formData.image]; // Keep existing images
+      
+      // Upload new images to Cloudinary if any
+      if (imageFiles.length > 0) {
+        const newImageUrls = await uploadImagesToCloudinary(imageFiles);
+        uploadedImageUrls = [...uploadedImageUrls, ...newImageUrls];
+      }
+      
+      // Process the form data before submission
+      const processedFormData = {
+        ...formData,
+        // Use uploaded image URLs
+        image: uploadedImageUrls,
+        // Filter out empty special offers
+        specialOffers: formData.specialOffers.filter(offer => offer.trim().length > 0),
+        // Filter out incomplete EMI options
+        emiOptions: formData.emiOptions.filter(option => 
+          option.duration.trim().length > 0 && option.amount.trim().length > 0
+        ),
+        // Filter out empty colors
+        availableColors: formData.availableColors.filter(color => color.trim().length > 0),
+        // Ensure priority is a number
+        priority: parseInt(formData.priority) || 1
+      };
+      
+      onSubmit(processedFormData);
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      alert('Error uploading images. Please try again.');
+    } finally {
+      setUploadingImages(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -263,23 +351,6 @@ const BikeFormModal = ({ isOpen, onClose, onSubmit, bike = null, isLoading }) =>
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   Lower numbers appear first (1 = highest priority)
-                </p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Image Filename(s)
-                </label>
-                <input
-                  type="text"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleInputChange}
-                  placeholder="e.g., bike1.jpg or bike1.jpg,bike2.jpg,bike3.jpg"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Enter filename(s). For multiple images, separate with commas. The path "/images/bikes/" will be added automatically.
                 </p>
               </div>
 
@@ -342,6 +413,73 @@ const BikeFormModal = ({ isOpen, onClose, onSubmit, bike = null, isLoading }) =>
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
+            </div>
+
+            {/* Image Upload Section */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Bike Images
+              </label>
+              
+              {/* Upload Button */}
+              <div className="mb-4">
+                <label className="flex items-center justify-center w-full p-6 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition-colors">
+                  <div className="text-center">
+                    <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                    <span className="text-sm text-gray-600">
+                      Click to upload images or drag and drop
+                    </span>
+                    <span className="text-xs text-gray-500 block mt-1">
+                      PNG, JPG, WEBP up to 10MB each
+                    </span>
+                    <span className="text-xs text-orange-500 block mt-1">
+                      Images will be uploaded to Cloudinary when you click Submit
+                    </span>
+                  </div>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+
+              {/* Image Previews */}
+              {imagePreviewUrls.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {imagePreviewUrls.map((url, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={url}
+                        alt={`Preview ${index + 1}`}
+                        className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                      <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                        {index + 1}
+                      </div>
+                      {/* Status indicator */}
+                      {index < formData.image.length ? (
+                        <div className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded">
+                          Uploaded
+                        </div>
+                      ) : (
+                        <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+                          Pending
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Price and Colors Preview Section */}
@@ -460,6 +598,7 @@ const BikeFormModal = ({ isOpen, onClose, onSubmit, bike = null, isLoading }) =>
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
+              </div>
             </div>
 
             {/* Available Colors */}
@@ -606,21 +745,20 @@ const BikeFormModal = ({ isOpen, onClose, onSubmit, bike = null, isLoading }) =>
               <button
                 type="button"
                 onClick={handleSubmit}
-                disabled={isLoading}
+                disabled={isLoading || uploadingImages}
                 className="flex items-center gap-2 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? (
+                {(isLoading || uploadingImages) ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <Save className="w-4 h-4" />
                 )}
-                {bike ? 'Update Bike' : 'Add Bike'}
+                {uploadingImages ? 'Uploading Images...' : (bike ? 'Update Bike' : 'Add Bike')}
               </button>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 };

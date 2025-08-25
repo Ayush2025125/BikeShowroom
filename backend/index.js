@@ -13,6 +13,9 @@ const tyreRoutes = require("./routes/tyreRoutes.js");
 const offerRoutes = require("./routes/offerRoutes.js");
 const carousalRoutes = require("./routes/carousalRoutes.js");
 
+//cloudinary route
+const cloudinaryRoute = require("./routes/bikeUploadRoute.js");
+
 //export route
 const exportRoutes = require('./routes/exportRoute');
 
@@ -32,6 +35,7 @@ app.use('/api/tyres',tyreRoutes);
 app.use('/api/offers',offerRoutes);
 app.use('/api/carousal',carousalRoutes);
 app.use('/api', exportRoutes);
+app.use('/api', cloudinaryRoute);
 
 // DB Connection
 mongoose.connect(process.env.MONGO_URI).then(() => {
