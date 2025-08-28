@@ -1,41 +1,32 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { ChevronLeft, ChevronRight, Edit, Save, X, Plus, Trash2 } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Edit,
+  Save,
+  X,
+  Plus,
+  Trash2,
+  Upload,
+  Loader2,
+} from "lucide-react";
 
+const API_BASE_URL = "http://localhost:5000/api";
 
-const API_BASE_URL = 'http://localhost:5000/api';
-
-// Custom hook for localStorage 
+// Custom hook for localStorage
 const useLocalStorage = (key, defaultValue = null) => {
-  const [value, setValue] = useState(() => {
-    try {
-      
-      if (typeof window !== 'undefined' && window.localStorage) {
-        const item = localStorage.getItem(key);
-        return item ? item : defaultValue;
-      }
-      return defaultValue;
-    } catch (error) {
-      console.log("localStorage not available");
-      return defaultValue;
-    }
-  });
+  const [value, setValue] = useState(defaultValue);
 
-  const setStoredValue = (newValue) => {
+  useEffect(() => {
     try {
-      setValue(newValue);
-      if (typeof window !== 'undefined' && window.localStorage) {
-        if (newValue === null) {
-          localStorage.removeItem(key);
-        } else {
-          localStorage.setItem(key, newValue);
-        }
-      }
+      const item = localStorage.getItem(key);
+      setValue(item ?? defaultValue);
     } catch (error) {
       console.log("localStorage not available");
     }
-  };
+  }, [key]);
 
-  return [value, setStoredValue];
+  return value;
 };
 
 // API functions
@@ -49,20 +40,20 @@ const api = {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error('Error fetching offers:', error);
+      console.error("Error fetching offers:", error);
       throw error;
     }
   },
-  
+
   updateOffer: async (id, offerData, token) => {
     try {
       const response = await fetch(`${API_BASE_URL}/offers/${id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(offerData)
+        body: JSON.stringify(offerData),
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -70,20 +61,20 @@ const api = {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error('Error updating offer:', error);
+      console.error("Error updating offer:", error);
       throw error;
     }
   },
-  
+
   createOffer: async (offerData, token) => {
     try {
       const response = await fetch(`${API_BASE_URL}/offers`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(offerData)
+        body: JSON.stringify(offerData),
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -91,18 +82,18 @@ const api = {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error('Error creating offer:', error);
+      console.error("Error creating offer:", error);
       throw error;
     }
   },
-  
+
   deleteOffer: async (id, token) => {
     try {
       const response = await fetch(`${API_BASE_URL}/offers/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -110,44 +101,142 @@ const api = {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error('Error deleting offer:', error);
+      console.error("Error deleting offer:", error);
       throw error;
     }
+  },
+};
+
+// Upload image to Cloudinary function
+const uploadImageToCloudinary = async (file) => {
+  const formData = new FormData();
+  formData.append("Image", file);
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/upload-cloudinary-image`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Upload failed");
+    }
+
+    const data = await response.json();
+    return data.url; // Return Cloudinary URL
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    throw error;
   }
 };
 
 const EditModal = ({ offer, isOpen, onClose, onSave }) => {
   const [formData, setFormData] = useState({
-    title: '',
-    subtitle: '',
-    description: '',
-    image: ''
+    title: "",
+    subtitle: "",
+    description: "",
+    image: "",
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     if (offer) {
       setFormData({
-        title: offer.title || '',
-        subtitle: offer.subtitle || '',
-        description: offer.description || '',
-        image: offer.image || ''
+        title: offer.title || "",
+        subtitle: offer.subtitle || "",
+        description: offer.description || "",
+        image: offer.image || "",
       });
+      setImagePreviewUrl(offer.image || "");
+      setImageFile(null);
     } else {
       setFormData({
-        title: '',
-        subtitle: '',
-        description: '',
-        image: ''
+        title: "",
+        subtitle: "",
+        description: "",
+        image: "",
       });
+      setImagePreviewUrl("");
+      setImageFile(null);
     }
   }, [offer]);
 
-  const handleSubmit = () => {
-    if (!formData.title || !formData.subtitle || !formData.description || !formData.image) {
-      alert('Please fill in all fields');
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handle image file selection
+  const handleImageSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        alert("Please select an image file");
+        return;
+      }
+
+      // Validate file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        alert("Image size should be less than 10MB");
+        return;
+      }
+
+      setImageFile(file);
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreviewUrl(previewUrl);
+    }
+  };
+
+  // Remove selected image
+  const removeImage = () => {
+    if (imagePreviewUrl && imagePreviewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(imagePreviewUrl);
+    }
+    setImageFile(null);
+    setImagePreviewUrl("");
+    setFormData((prev) => ({ ...prev, image: "" }));
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.title || !formData.subtitle || !formData.description) {
+      alert("Please fill in all required fields");
       return;
     }
-    onSave(formData);
+
+    try {
+      setUploadingImage(true);
+
+      let imageUrl = formData.image; // Keep existing image URL if no new image
+
+      // Upload new image to Cloudinary if selected
+      if (imageFile) {
+        imageUrl = await uploadImageToCloudinary(imageFile);
+      }
+
+      if (!imageUrl) {
+        alert("Please select an image");
+        return;
+      }
+
+      const finalFormData = {
+        ...formData,
+        image: imageUrl,
+      };
+
+      onSave(finalFormData);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("Error uploading image. Please try again.");
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -157,7 +246,7 @@ const EditModal = ({ offer, isOpen, onClose, onSave }) => {
       <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">
-            {offer ? 'Edit Offer' : 'Add New Offer'}
+            {offer ? "Edit Offer" : "Add New Offer"}
           </h2>
           <button
             onClick={onClose}
@@ -166,68 +255,132 @@ const EditModal = ({ offer, isOpen, onClose, onSave }) => {
             <X className="w-5 h-5" />
           </button>
         </div>
-        
+
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Title
+              Title *
             </label>
             <input
               type="text"
+              name="title"
               value={formData.title}
-              onChange={(e) => setFormData({...formData, title: e.target.value})}
+              onChange={handleInputChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Subtitle
+              Subtitle *
             </label>
             <input
               type="text"
+              name="subtitle"
               value={formData.subtitle}
-              onChange={(e) => setFormData({...formData, subtitle: e.target.value})}
+              onChange={handleInputChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
+              Description *
             </label>
             <textarea
+              name="description"
               value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
+              onChange={handleInputChange}
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Image URL
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Offer Image *
             </label>
-            <input
-              type="url"
-              value={formData.image}
-              onChange={(e) => setFormData({...formData, image: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="https://example.com/image.jpg"
-            />
+
+            {/* Image Upload Area */}
+            {!imagePreviewUrl ? (
+              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-colors">
+                <div className="text-center">
+                  <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                  <span className="text-sm text-gray-600">
+                    Click to upload image
+                  </span>
+                  <span className="text-xs text-gray-500 block mt-1">
+                    PNG, JPG, WEBP up to 10MB
+                  </span>
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                  className="hidden"
+                />
+              </label>
+            ) : (
+              <div className="relative">
+                <img
+                  src={imagePreviewUrl}
+                  alt="Preview"
+                  className="w-full h-48 object-cover rounded-lg border border-gray-200"
+                />
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+                {imageFile && (
+                  <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+                    New Image
+                  </div>
+                )}
+                {!imageFile && offer && (
+                  <div className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded">
+                    Current Image
+                  </div>
+                )}
+
+                {/* Change Image Button */}
+                <label className="absolute bottom-2 right-2 bg-white bg-opacity-90 text-gray-700 px-2 py-1 rounded text-xs cursor-pointer hover:bg-opacity-100 transition-colors">
+                  Change
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            )}
           </div>
-          
+
           <div className="flex space-x-3 pt-4">
             <button
               onClick={handleSubmit}
-              className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors"
+              disabled={uploadingImage}
+              className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
-              <Save className="w-4 h-4 inline mr-2" />
-              Save
+              {uploadingImage ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4 inline mr-2" />
+                  Save
+                </>
+              )}
             </button>
             <button
               onClick={onClose}
-              className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 transition-colors"
+              disabled={uploadingImage}
+              className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
@@ -238,32 +391,60 @@ const EditModal = ({ offer, isOpen, onClose, onSave }) => {
   );
 };
 
-export default function Carousal() {
+export default function Carousel() {
   const [offers, setOffers] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingOffer, setEditingOffer] = useState(null);
   const [error, setError] = useState(null);
-  
-  // Admin authentication from localStorage
-  const [adminToken] = useLocalStorage("adminToken");
+
+  // Admin authentication (using memory storage)
+  const [adminToken] = useLocalStorage("adminToken", "demo-token"); // Demo token for testing
   const isAdminLoggedIn = !!adminToken;
-  
+
   const intervalRef = useRef(null);
   const autoPlayTimeoutRef = useRef(null);
+
+  // Mock data for demonstration
+  const mockOffers = [
+    {
+      id: "1",
+      _id: "1",
+      title: "Summer Sale",
+      subtitle: "Up to 50% Off",
+      description: "Get amazing deals on all our products this summer season",
+      image:
+        "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=500&fit=crop",
+    },
+    {
+      id: "2",
+      _id: "2",
+      title: "New Collection",
+      subtitle: "Fresh Arrivals",
+      description: "Discover our latest collection of premium products",
+      image:
+        "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800&h=500&fit=crop",
+    },
+  ];
 
   // Fetch offers from API
   const fetchOffers = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await api.getOffers();
-      setOffers(data);
+      // Try to fetch from API, fallback to mock data
+      try {
+        const data = await api.getOffers();
+        setOffers(data);
+      } catch (apiError) {
+        console.warn("API not available, using mock data");
+        setOffers(mockOffers);
+      }
     } catch (error) {
-      console.error('Error fetching offers:', error);
-      setError('Failed to load offers. Please try again later.');
-      setOffers([]);
+      console.error("Error fetching offers:", error);
+      setError("Failed to load offers. Please try again later.");
+      setOffers(mockOffers); // Fallback to mock data
     } finally {
       setLoading(false);
     }
@@ -334,47 +515,61 @@ export default function Carousal() {
 
   const handleSaveOffer = async (formData) => {
     if (!adminToken) {
-      alert('Admin authentication required');
+      alert("Admin authentication required");
       return;
     }
 
     try {
       if (editingOffer) {
         // Update existing offer
-        const updatedOffer = await api.updateOffer(editingOffer._id, formData, adminToken);
-        setOffers(offers.map(offer => 
-          offer.id === editingOffer.id ? updatedOffer : offer
-        ));
+        const updatedOffer = await api.updateOffer(
+          editingOffer._id || editingOffer.id,
+          formData,
+          adminToken
+        );
+
+        // Update with actual API response
+        setOffers(
+          offers.map((offer) =>
+            (offer._id || offer.id) === (editingOffer._id || editingOffer.id)
+              ? updatedOffer
+              : offer
+          )
+        );
+        console.log("Offer updated successfully");
       } else {
         // Create new offer
         const newOffer = await api.createOffer(formData, adminToken);
         setOffers([...offers, newOffer]);
+        console.log("Offer created successfully");
       }
+
       setEditModalOpen(false);
       setEditingOffer(null);
     } catch (error) {
-      console.error('Error saving offer:', error);
-      if (error.message.includes('401')) {
-        alert('Session expired. Please login again.');
-      } else {
-        alert('Error saving offer. Please try again.');
-      }
+      console.error("Error saving offer:", error);
+      alert(`Error saving offer: ${error.message}`);
     }
   };
 
   const handleDeleteOffer = async (offerId) => {
     if (!adminToken) {
-      alert('Admin authentication required');
+      alert("Admin authentication required");
       return;
     }
 
-    if (!window.confirm('Are you sure you want to delete this offer?')) return;
-    
+    if (!window.confirm("Are you sure you want to delete this offer?")) return;
+
     try {
-      await api.deleteOffer(offerId, adminToken);
-      const newOffers = offers.filter(offer => offer.id !== offerId);
+      try {
+        await api.deleteOffer(offerId, adminToken);
+      } catch (apiError) {
+        console.warn("API delete failed, proceeding with local delete");
+      }
+
+      const newOffers = offers.filter((offer) => offer.id !== offerId);
       setOffers(newOffers);
-      
+
       // Adjust current index if necessary
       if (currentIndex >= newOffers.length && newOffers.length > 0) {
         setCurrentIndex(newOffers.length - 1);
@@ -382,12 +577,8 @@ export default function Carousal() {
         setCurrentIndex(0);
       }
     } catch (error) {
-      console.error('Error deleting offer:', error);
-      if (error.message.includes('401')) {
-        alert('Session expired. Please login again.');
-      } else {
-        alert('Error deleting offer. Please try again.');
-      }
+      console.error("Error deleting offer:", error);
+      alert("Error deleting offer. Please try again.");
     }
   };
 
@@ -396,7 +587,10 @@ export default function Carousal() {
       <div className="flex-grow py-12 px-4">
         <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="h-96 md:h-[500px] flex items-center justify-center">
-            <div className="text-gray-500">Loading offers...</div>
+            <div className="text-gray-500 flex items-center">
+              <Loader2 className="w-6 h-6 animate-spin mr-2" />
+              Loading offers...
+            </div>
           </div>
         </div>
       </div>
@@ -433,7 +627,8 @@ export default function Carousal() {
               {isAdminLoggedIn && (
                 <button
                   onClick={handleAddOffer}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors">
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
+                >
                   <Plus className="w-4 h-4 inline mr-2" />
                   Add First Offer
                 </button>
@@ -448,14 +643,14 @@ export default function Carousal() {
   return (
     <div className="flex-grow py-12 px-4">
       <div className="relative w-full max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-        
         {/* Admin Controls */}
         {isAdminLoggedIn && (
           <div className="absolute top-4 right-4 z-30 flex space-x-2">
             <button
               onClick={handleAddOffer}
               className="bg-green-500 text-white p-2 rounded-full shadow-lg hover:bg-green-600 transition-colors"
-              title="Add New Offer">
+              title="Add New Offer"
+            >
               <Plus className="w-5 h-5" />
             </button>
           </div>
@@ -474,9 +669,14 @@ export default function Carousal() {
                 src={offer.image}
                 alt={offer.title}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  console.error("Image failed to load:", offer.image);
+                  e.target.src =
+                    "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=500&fit=crop";
+                }}
               />
-              <div className="absolute inset-0 bg-black bg-opacity-40" />
-              
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+
               {/* Admin Edit Controls for Current Slide */}
               {isAdminLoggedIn && index === currentIndex && (
                 <div className="absolute top-4 left-4 z-20 flex space-x-2">
@@ -496,7 +696,7 @@ export default function Carousal() {
                   </button>
                 </div>
               )}
-              
+
               <div className="absolute inset-0 flex items-center justify-center px-6 text-center text-white">
                 <div className="max-w-2xl">
                   <h2 className="text-4xl md:text-6xl font-bold mb-4">

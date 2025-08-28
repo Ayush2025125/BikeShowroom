@@ -147,11 +147,11 @@ const BikeFormModal = ({ isOpen, onClose, onSubmit, bike = null, isLoading }) =>
   const uploadImagesToCloudinary = async (files) => {
     const uploadPromises = files.map(async (file) => {
       const formDataUpload = new FormData();
-      formDataUpload.append('bikeImage', file);
+      formDataUpload.append('Image', file);
 
       try {
         const response = await fetch(
-          `http://localhost:5000/api/upload-bike-image`, 
+          `http://localhost:5000/api/upload-cloudinary-image`, 
           {
             method: 'POST',
             body: formDataUpload,
@@ -758,7 +758,7 @@ const BikeFormModal = ({ isOpen, onClose, onSubmit, bike = null, isLoading }) =>
             </div>
           </div>
         </div>
-      </div>
+      </div>A
     </div>
   );
 };
