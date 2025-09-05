@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { X, ChevronLeft, ChevronRight, Phone, Heart } from "lucide-react";
-import { useNavigate } from "react-router-dom"; // Add this import
+import { useNavigate } from "react-router-dom"; 
 
 const ShowOffer = ({ isOpen, onClose, bikeData }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const navigate = useNavigate(); // Add this hook
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     if (isOpen) {

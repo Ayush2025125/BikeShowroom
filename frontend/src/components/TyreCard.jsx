@@ -38,8 +38,8 @@ const TyreCard = ({ tyre, onCheckOffers, onEdit, onDelete, isAdmin }) => {
         <img
           src={
             tyre.images && tyre.images.length > 0
-              ? `/images/tyres/${tyre.images[0]}`
-              : "/api/placeholder/400/300"
+              ? `${tyre.images[0]}`
+              : `/images/tyres/${tyre.images[0]}`
           }
           alt={`${tyre.brand} ${tyre.model}` || "Tyre Image"}
           className="w-full h-full object-cover"
