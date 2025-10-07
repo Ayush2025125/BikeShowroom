@@ -399,8 +399,8 @@ export default function Carousel() {
   const [editingOffer, setEditingOffer] = useState(null);
   const [error, setError] = useState(null);
 
-  // Admin authentication (using memory storage)
-  const [adminToken] = useLocalStorage("adminToken", "demo-token"); // Demo token for testing
+  // Admin authentication 
+  const adminToken = useLocalStorage("adminToken"); 
   const isAdminLoggedIn = !!adminToken;
 
   const intervalRef = useRef(null);
