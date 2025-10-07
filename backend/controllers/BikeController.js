@@ -19,14 +19,25 @@ exports.getTop3Bikes = async (req, res) => {
 };
 
 exports.addBike = async (req, res) => {
-    try {
-        const newBike = new Bike(req.body);
-        await newBike.save();
-        res.status(201).json(newBike);
-    } catch (err) {
-        res.status(400).json({ error: `${err}` });
-    }
-}
+  try {
+    const { priority } = req.body;
+
+    //Shift priorities of existing bikes
+    await Bike.updateMany(
+      { priority: { $gte: priority } },
+      { $inc: { priority: 1 } }
+    );
+
+    //Save the new bike
+    const newBike = new Bike(req.body);
+    await newBike.save();
+
+    res.status(201).json(newBike);
+  } catch (err) {
+    res.status(400).json({ error: `${err}` });
+  }
+};
+
 
 exports.deleteBike = async (req, res) => {
   try {
