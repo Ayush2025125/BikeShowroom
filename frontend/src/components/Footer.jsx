@@ -17,7 +17,7 @@ export default function Footer() {
         setMail('');
      } catch (err) {
      console.log(err);
-     alert("Subscription failed. Try again later.");
+     alert("Email Already exists");
      }
   }
   return (
