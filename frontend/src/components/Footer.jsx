@@ -67,7 +67,7 @@ export default function Footer() {
                 Bhubaneswar, odisha, 751030
               </p>
               <p className="font-semibold mt-4 text-white">info@example.com</p>
-              <p className="mt-2 font-semibold text-white">029-2021-4012</p>
+              <p className="mt-2 font-semibold text-white">+91 9777373540</p>
             </div>
 
             {/* Quick Link */}
@@ -123,7 +123,7 @@ export default function Footer() {
           {/* Bottom Footer */}
           <div className="border-t border-gray-700 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
             <p>
-              Copyright © 2024 <span className="text-red-500 font-semibold">Speed Toyz 2.0</span>, Inc. All Rights Reserved
+              Copyright © 2024 <span className="text-red-500 font-semibold">Naresh Automobiles</span>, Inc. All Rights Reserved
             </p>
             <div className="flex space-x-4 mt-4 md:mt-0 items-center">
               <span>Follow Us On:</span>
